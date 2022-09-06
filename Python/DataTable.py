@@ -13,8 +13,12 @@ class TableDoc():
     df_list = []
 
     def __init__(self, doc_file_path):
-        super TableDoc_()
         self.doc_path = doc_file_path
 
     def scrape_pdf(self):
-        self.df_list = read_pdf(self.doc_file_path)
+        self.df_list = read_pdf(self.doc_path, pages="all")
+
+# sample use case:
+# from Python.DataTable import TableDoc
+# test_table = TableDoc("temp/Ap-BlueWhaleNwRorqualBleu-v00-2020Juil-Eng.pdf")
+# test_table.scrape_pdf()
