@@ -1,0 +1,75 @@
+---
+title: " Exploring Solutions"
+author: "Strategic RAP Champions"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: united
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(DiagrammeR)
+```
+
+## Project Conceptual Diagram
+
+
+```{r workflow, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+workflow <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = rectangle]        
+  rec1 [label = 'Step 1. Recovery Document Table [PDF, Word, or...]']
+  rec2 [label = 'Step 2. Data Frame']
+  rec3 [label = 'Step 3. Data Frame to csv, excle or...']
+  rec4 [label = 'Step 4. Reporting [interactive reporting web-based and customized static reporting]']
+  
+  rec1 -> rec2 -> rec3 -> rec4
+  }",
+  height = 500)
+```
+
+```{r workflow plot}
+workflow
+```
+
+## Options Step 1 to Step 2
+
+#### Azure Form Recognizer
+
+- [Azure Form Recognizer](https://docs.microsoft.com/en-us/azure/applied-ai-services/form-recognizer/overview?WT.mc_id=aiml-14201-cassieb&tabs=v3-0) is a cloud-based Azure Applied AI Service that analyzes forms and documents, extracts text and data, and maps field relationships as key-value pairs: https://formrecognizer.appliedai.azure.com/studio
+
+#### tabulizer R Package
+- https://github.com/ropensci/tabulizer
+
+## Demos
+
+#### Azure Form Recognizer
+- https://www.youtube.com/watch?v=rkJa6vbkMcU
+- https://github.com/Azure-Samples/cognitive-services-quickstart-code/blob/master/python/FormRecognizer/rest/python-train-extract.md
+
+#### R packages
+- https://github.com/ropensci/tabulizer
+- Tabulizer Package: https://www.youtube.com/watch?v=nlsWjezvsg8
+- PDF Scrape and exploratory analysis code demo: https://www.business-science.io/code-tools/2019/09/23/tabulizer-pdf-scraping.html#workflow
+
+## Pros 
+
+- Azure Form Recognizer allows coordination with tools withing our Microsoft Suite
+- Azure Form Recognizer -- Powered with Python?
+
+## Cons 
+
+- Azure Form Recognizer does not seem to exist in our current suite of tools? (I logged in a ticket) or maybe there is somehting we can dowlonad easily?
+- Not an open source solution (0-500 pages are free per month, after that, there is a cost associated with using this tool https://azure.microsoft.com/en-ca/pricing/details/form-recognizer/)
+- Tabulizer Package seems to have a lot of dependencies and bit of a convoluted process to install it (not tested yet) - may need admin privileges
+- Package ‘tabulizer’ was removed from the CRAN repository.
+
+
+## Flags TBD 
+
+- csadown generated document --> due to lack of web accessibility issues, LaTeX generated PDFs are not web accessible - thus test using word files instead. 
+
