@@ -13,7 +13,12 @@ Outcomes of this project will include:
 -   Project board to craft, coordinate, and track milestones to be completed throughout the duration of this project: <https://github.com/orgs/dfo-mar-odis/projects/2/views/14> Most of the work of this project will be coordinated asynchronously through this board (which will be linked to the code to be developed), in addition to monthly meetings. The link above is for a for a view specifically for this project, however, the board contains other views for additional projects of the Reproducible Analytical Pipeline initiative.
 -   SARP documents: This project will select and review a list of SARP documents to extract data from, and identify the type of information to be standardized and extracted. The following link contains a folder that lists potential documents to be reviewed: [folder](https://086gc.sharepoint.com/:f:/s/MaritimesSpatialPlanning-MAROpenDataLogistics/Ej_hnfwCzfdEnlzCpE2jBXwB1DM6zJEToE9rmaPJxWy84w?e=pJJXxB)
 
-Full description of this project is available in a protected SharePoint file: [full project text](https://086gc.sharepoint.com/:w:/s/MaritimesSpatialPlanning-MAROpenDataLogistics/EZLu-2jTNt1DgVY_0GsX3eEBtsJwi7xA_vWNSAqwBURbdg?e=qzbbf0)
+
+### Project Folder
+- SARP documents: This project will select and review a list of SARP documents to extract data from, and identify the type of information to be standardized and extracted. The following link contains a folder that lists documents to be tested, as provided by Sam: [folder](https://086gc.sharepoint.com/:f:/s/MaritimesSpatialPlanning-MAROpenDataLogistics/EvvcRBMcJSpHkfjg2lMPfSgBzyATiN5JYVJtqH92j5CCaA?e=d1nVCT).
+
+### Project Proposal
+- Full description of this project is available in a protected SharePoint file: [full project text](https://086gc.sharepoint.com/:w:/s/MaritimesSpatialPlanning-MAROpenDataLogistics/EZLu-2jTNt1DgVY_0GsX3eEBtsJwi7xA_vWNSAqwBURbdg?e=qzbbf0)
 
 ## R Installation
 
