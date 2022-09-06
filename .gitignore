@@ -5,3 +5,4 @@
 
 venv/*
 *.Rproj
+*/__pycache__/*
