@@ -14,3 +14,15 @@ Outcomes of this project will include:
 - SARP documents: This project will select and review a list of SARP documents to extract data from, and identify the type of information to be standardized and extracted. The following link contains a folder that lists potential documents to be reviewed: [folder](https://086gc.sharepoint.com/:f:/s/MaritimesSpatialPlanning-MAROpenDataLogistics/Ej_hnfwCzfdEnlzCpE2jBXwB1DM6zJEToE9rmaPJxWy84w?e=pJJXxB)
 
 Full description of this project is available in a protected SharePoint file: [full project text](https://086gc.sharepoint.com/:w:/s/MaritimesSpatialPlanning-MAROpenDataLogistics/EZLu-2jTNt1DgVY_0GsX3eEBtsJwi7xA_vWNSAqwBURbdg?e=qzbbf0)
+
+## R Installation
+```R 
+install.packages("remotes")
+remotes::install_deps()
+```
+Adding a package:
+
+``` R 
+usethis::use_package("packageName")
+```
+After adding a new package, commit the updated description file to source control.

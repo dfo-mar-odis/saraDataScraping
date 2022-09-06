@@ -1,0 +1,18 @@
+Package: saraDataScraping
+Title: SARA Data Scraping
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Quentin",
+           family = "Stoyel",
+           role = c("aut", "cre"),
+           email = "quentin.stoyel@example.com")
+Description: Repo of code to scrap data from recovery documents.
+License: `use_mit_license()`, `use_gpl3_license()` 
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports: 
+    dplyr,
+    here,
+    usethis
