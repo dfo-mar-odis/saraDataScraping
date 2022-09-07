@@ -2,7 +2,11 @@
 .Rhistory
 .RData
 .Ruserdata
+.Rbuildignore
 
 venv/*
 *.Rproj
 temp/*
+*.html
+*.idea/*
+*__pycache__*
