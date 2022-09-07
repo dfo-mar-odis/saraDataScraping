@@ -1600,20 +1600,25 @@ pre code {
 <li><a href="#cons" id="toc-cons">Cons</a></li>
 <li><a href="#flags-questions-tbd" id="toc-flags-questions-tbd">Flags
 &amp; Questions TBD</a></li>
+<li><a href="#agenda-meeting-2" id="toc-agenda-meeting-2">Agenda Meeting
+2</a>
+<ul>
+<li><a href="#user-stories" id="toc-user-stories">User stories</a></li>
+</ul></li>
 </ul>
 </div>
 
 <div id="project-conceptual-diagram" class="section level2">
 <h2>Project Conceptual Diagram</h2>
 <pre class="r"><code>workflow</code></pre>
-<div id="htmlwidget-12dd03108e9a1ff3d843" style="width:672px;height:500px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-12dd03108e9a1ff3d843">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle]        \n  rec1 [label = \"Step 1. Recovery Document Table [PDF, Word, or...]\"]\n  rec2 [label = \"Step 2. Data Frame\"]\n  rec3 [label = \"Step 3. Data Frame to csv, excle or...\"]\n  rec4 [label = \"Step 4. Reporting [interactive reporting web-based and customized static reporting]\"]\n  \n  rec1 -> rec2 -> rec3 -> rec4\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-cf84419d5f503750e49d" style="width:672px;height:500px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-cf84419d5f503750e49d">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle]        \n  rec1 [label = \"Step 1. Recovery Document Table [PDF, Word, or...]\"]\n  rec2 [label = \"Step 2. Data Frame\"]\n  rec3 [label = \"Step 3. Data Frame to csv, excel or...\"]\n  rec4 [label = \"Step 4. Reporting [interactive reporting web-based and customized static reporting]\"]\n  \n  rec1 -> rec2 -> rec3 -> rec4\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="options-step-1-to-step-2" class="section level2">
 <h2>Options Step 1 to Step 2</h2>
 <pre class="r"><code>Option1</code></pre>
-<div id="htmlwidget-4d733221558a518ca947" style="width:672px;height:500px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-4d733221558a518ca947">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle]        \n  rec1 [label = \"PDF\"]\n  rec2 [label = \"Tool\"]\n  rec3 [label = \"Data Table\"]\n\n  rec1 -> rec2 -> rec3 \n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-11d6aa67b79c511d2728" style="width:672px;height:500px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-11d6aa67b79c511d2728">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle]        \n  rec1 [label = \"PDF and/or embedded metadata\"]\n  rec2 [label = \"Tool\"]\n  rec3 [label = \"Data Frame\"]\n\n  rec1 -> rec2 -> rec3 \n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <div id="azure-form-recognizer" class="section level4">
 <h4>Azure Form Recognizer</h4>
 <ul>
@@ -1691,9 +1696,7 @@ privileges</li>
 <div id="flags-questions-tbd" class="section level2">
 <h2>Flags &amp; Questions TBD</h2>
 <ul>
-<li>Solutions must take into account the user experience of i) folks
-writing SARA documents, ii) folks mining these documents</li>
-<li>Are PDFs the best way to mine tables in the future from Recovery
+<li>Are PDFs the best way to store metadata (a.k.a) tables from Recovery
 Documents?
 <ul>
 <li>if no, why not, and what solutions can we offer?</li>
@@ -1704,10 +1707,66 @@ scenarios:
 <li>Folks working in a word document that gets converted into PDF</li>
 <li>Folks generating csasdown documents –&gt; due to lack of web
 accessibility issues, LaTeX generated PDFs are not web accessible - thus
-test using word files instead.</li>
+testing using word files instead may be key.</li>
 </ul></li>
+</ul></li>
+<li>Folks writing SARA documents: would they be interested in reporting
+key tables in the PDF as well as an additional database?</li>
+<li>Folks mining these documents: what is their background? a solution
+involving programming may require a coding background?</li>
+<li>In the future, would the Recovery Documents PDF/Word host the
+authoritative data to be mined in the future? or is there interest in
+exploring additional options to store metadata (a.k.a. tables)?</li>
+<li>When mining tables in the future from the Recovery Document PDF/Word
+file:
+<ul>
+<li>Do you envision mining tables directly from the Recovery Document
+PDF/Word file?</li>
+<li>Or are you open to recommendations in the workflow to store and mine
+the data from somewhere else (e.g. database, excel sheets populated as
+part of submission)?</li>
 </ul></li>
 </ul>
+</div>
+<div id="agenda-meeting-2" class="section level2">
+<h2>Agenda Meeting 2</h2>
+<div id="user-stories" class="section level3">
+<h3>User stories</h3>
+<ul>
+<li>DFO staff is tasked with mining tables from Recovery Documents
+PDF/Word files to organized them in a nice and clean spreadsheet. Below
+are potential future scenarios of what their experience could be using
+different approaches.</li>
+</ul>
+<div id="scenario-1-staff-mines-tables-directly-from-current-recovery-document-pdfword-files" class="section level4">
+<h4>Scenario 1: Staff mines tables directly from current Recovery
+Document PDF/Word files</h4>
+<p>Staff finds interesting tables that ahve weird double lines, non
+matching lines and background white lines separating the cells.</p>
+</div>
+<div id="scenario-2-staff-mines-tables-directly-from-improved-recovery-document-pdfword-files." class="section level4">
+<h4>Scenario 2: Staff mines tables directly from improved Recovery
+Document PDF/Word files.</h4>
+<p>These improved documents have metadata (a.k.a. tables) that is mined
+at the same time as the filepath when scraping the doc.</p>
+</div>
+<div id="scenario-3-staff-takes-advantage-of-a-new-workflow-to-store-and-mine-the-data-from-somewhere-else" class="section level4">
+<h4>Scenario 3: Staff takes advantage of a new workflow to store and
+mine the data from somewhere else</h4>
+<p>Mining PDF and Word files is definitively a possiility. However, we
+are wodnering if there may be a better approach for mining data and
+storing it in an authoritative place. Data could then be mined from
+soemthing different than a PDF/Word file… something such as database,
+excel sheets, which could be populated as part of a submission.</p>
+<p>The evaluation of any scenario must take into account the time and
+user experience of i) folks writing/publishing SARA documents, ii) folks
+mining these documents.</p>
+</div>
+<div id="recommendations-for-input-spreadsheet" class="section level4">
+<h4>Recommendations for input spreadsheet</h4>
+<pre><code> - Need a bit of cleaning before interactive report pilot - happy to do cleaning with recommendations on how to keep spreadsheets as clean as possible for coding (Excel spreadsheets, CSV, Databases)</code></pre>
+</div>
+</div>
 </div>
 
 
