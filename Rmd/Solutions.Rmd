@@ -38,12 +38,34 @@ workflow
 
 ## Options Step 1 to Step 2
 
+```{r workflow2, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+Option1 <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = rectangle]        
+  rec1 [label = 'PDF']
+  rec2 [label = 'Tool']
+  rec3 [label = 'Data Table']
+
+  rec1 -> rec2 -> rec3 
+  }",
+  height = 500)
+```
+
+```{r workflow plot2}
+Option1
+```
+
 #### Azure Form Recognizer
 
 - [Azure Form Recognizer](https://docs.microsoft.com/en-us/azure/applied-ai-services/form-recognizer/overview?WT.mc_id=aiml-14201-cassieb&tabs=v3-0) is a cloud-based Azure Applied AI Service that analyzes forms and documents, extracts text and data, and maps field relationships as key-value pairs: https://formrecognizer.appliedai.azure.com/studio
 
-#### tabulizer R Package
+#### `tabulizer` R Package
 - https://github.com/ropensci/tabulizer
+
+#### Tabula
+- https://tabula.technology/  -- software can be used to extract data manually, or folks can implement a solution programatically using python? https://www.youtube.com/watch?v=702lkQbZx50
 
 ## Demos
 
@@ -56,10 +78,16 @@ workflow
 - Tabulizer Package: https://www.youtube.com/watch?v=nlsWjezvsg8
 - PDF Scrape and exploratory analysis code demo: https://www.business-science.io/code-tools/2019/09/23/tabulizer-pdf-scraping.html#workflow
 
+#### Tabula
+- https://www.youtube.com/watch?v=NvcTIZ2Je50 
+
+
+
 ## Pros 
 
 - Azure Form Recognizer allows coordination with tools withing our Microsoft Suite
 - Azure Form Recognizer -- Powered with Python?
+- Tabula is free and open source. Tabula was created by journalists for journalists and anyone else working with data locked away in PDFs. 
 
 ## Cons 
 
@@ -69,7 +97,13 @@ workflow
 - Package ‘tabulizer’ was removed from the CRAN repository.
 
 
-## Flags TBD 
 
-- csadown generated document --> due to lack of web accessibility issues, LaTeX generated PDFs are not web accessible - thus test using word files instead. 
+## Flags & Questions TBD 
+
+- Solutions must take into account the user experience of i) folks writing SARA documents, ii) folks mining these documents
+- Are PDFs the best way to mine tables in the future from Recovery Documents?
+  - if no, why not, and what solutions can we offer?
+  - if yes, is there any guidance we could provide for the tables themselves? this potential guidance will apply for two potential scenarios:
+    - Folks working in a word document that gets converted into PDF
+    - Folks generating csasdown documents --> due to lack of web accessibility issues, LaTeX generated PDFs are not web accessible - thus test using word files instead. 
 

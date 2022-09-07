@@ -11,7 +11,7 @@
 
 <meta name="author" content="Strategic RAP Champions" />
 
-<meta name="date" content="2022-09-06" />
+<meta name="date" content="2022-09-07" />
 
 <title>Exploring Solutions</title>
 
@@ -1587,7 +1587,7 @@ pre code {
 
 <h1 class="title toc-ignore">Exploring Solutions</h1>
 <h4 class="author">Strategic RAP Champions</h4>
-<h4 class="date">2022-09-06</h4>
+<h4 class="date">2022-09-07</h4>
 
 </div>
 
@@ -1598,18 +1598,22 @@ pre code {
 <li><a href="#demos" id="toc-demos">Demos</a></li>
 <li><a href="#pros" id="toc-pros">Pros</a></li>
 <li><a href="#cons" id="toc-cons">Cons</a></li>
-<li><a href="#flags-tbd" id="toc-flags-tbd">Flags TBD</a></li>
+<li><a href="#flags-questions-tbd" id="toc-flags-questions-tbd">Flags
+&amp; Questions TBD</a></li>
 </ul>
 </div>
 
 <div id="project-conceptual-diagram" class="section level2">
 <h2>Project Conceptual Diagram</h2>
 <pre class="r"><code>workflow</code></pre>
-<div id="htmlwidget-15ac45ce37c5f3922386" style="width:672px;height:500px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-15ac45ce37c5f3922386">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle]        \n  rec1 [label = \"Step 1. Recovery Document Table [PDF, Word, or...]\"]\n  rec2 [label = \"Step 2. Data Frame\"]\n  rec3 [label = \"Step 3. Data Frame to csv, excle or...\"]\n  rec4 [label = \"Step 4. Reporting [interactive reporting web-based and customized static reporting]\"]\n  \n  rec1 -> rec2 -> rec3 -> rec4\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-12dd03108e9a1ff3d843" style="width:672px;height:500px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-12dd03108e9a1ff3d843">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle]        \n  rec1 [label = \"Step 1. Recovery Document Table [PDF, Word, or...]\"]\n  rec2 [label = \"Step 2. Data Frame\"]\n  rec3 [label = \"Step 3. Data Frame to csv, excle or...\"]\n  rec4 [label = \"Step 4. Reporting [interactive reporting web-based and customized static reporting]\"]\n  \n  rec1 -> rec2 -> rec3 -> rec4\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="options-step-1-to-step-2" class="section level2">
 <h2>Options Step 1 to Step 2</h2>
+<pre class="r"><code>Option1</code></pre>
+<div id="htmlwidget-4d733221558a518ca947" style="width:672px;height:500px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4d733221558a518ca947">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle]        \n  rec1 [label = \"PDF\"]\n  rec2 [label = \"Tool\"]\n  rec3 [label = \"Data Table\"]\n\n  rec1 -> rec2 -> rec3 \n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <div id="azure-form-recognizer" class="section level4">
 <h4>Azure Form Recognizer</h4>
 <ul>
@@ -1620,9 +1624,17 @@ relationships as key-value pairs: <a href="https://formrecognizer.appliedai.azur
 </ul>
 </div>
 <div id="tabulizer-r-package" class="section level4">
-<h4>tabulizer R Package</h4>
+<h4><code>tabulizer</code> R Package</h4>
 <ul>
 <li><a href="https://github.com/ropensci/tabulizer" class="uri">https://github.com/ropensci/tabulizer</a></li>
+</ul>
+</div>
+<div id="tabula" class="section level4">
+<h4>Tabula</h4>
+<ul>
+<li><a href="https://tabula.technology/" class="uri">https://tabula.technology/</a> – software can be used to
+extract data manually, or folks can implement a solution programatically
+using python? <a href="https://www.youtube.com/watch?v=702lkQbZx50" class="uri">https://www.youtube.com/watch?v=702lkQbZx50</a></li>
 </ul>
 </div>
 </div>
@@ -1643,6 +1655,12 @@ relationships as key-value pairs: <a href="https://formrecognizer.appliedai.azur
 <li>PDF Scrape and exploratory analysis code demo: <a href="https://www.business-science.io/code-tools/2019/09/23/tabulizer-pdf-scraping.html#workflow" class="uri">https://www.business-science.io/code-tools/2019/09/23/tabulizer-pdf-scraping.html#workflow</a></li>
 </ul>
 </div>
+<div id="tabula-1" class="section level4">
+<h4>Tabula</h4>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=NvcTIZ2Je50" class="uri">https://www.youtube.com/watch?v=NvcTIZ2Je50</a></li>
+</ul>
+</div>
 </div>
 <div id="pros" class="section level2">
 <h2>Pros</h2>
@@ -1650,6 +1668,9 @@ relationships as key-value pairs: <a href="https://formrecognizer.appliedai.azur
 <li>Azure Form Recognizer allows coordination with tools withing our
 Microsoft Suite</li>
 <li>Azure Form Recognizer – Powered with Python?</li>
+<li>Tabula is free and open source. Tabula was created by journalists
+for journalists and anyone else working with data locked away in
+PDFs.</li>
 </ul>
 </div>
 <div id="cons" class="section level2">
@@ -1664,14 +1685,28 @@ that, there is a cost associated with using this tool <a href="https://azure.mic
 convoluted process to install it (not tested yet) - may need admin
 privileges</li>
 <li>Package ‘tabulizer’ was removed from the CRAN repository.</li>
+<li>Tabula:</li>
 </ul>
 </div>
-<div id="flags-tbd" class="section level2">
-<h2>Flags TBD</h2>
+<div id="flags-questions-tbd" class="section level2">
+<h2>Flags &amp; Questions TBD</h2>
 <ul>
-<li>csadown generated document –&gt; due to lack of web accessibility
-issues, LaTeX generated PDFs are not web accessible - thus test using
-word files instead.</li>
+<li>Solutions must take into account the user experience of i) folks
+writing SARA documents, ii) folks mining these documents</li>
+<li>Are PDFs the best way to mine tables in the future from Recovery
+Documents?
+<ul>
+<li>if no, why not, and what solutions can we offer?</li>
+<li>if yes, is there any guidance we could provide for the tables
+themselves? this potential guidance will apply for two potential
+scenarios:
+<ul>
+<li>Folks working in a word document that gets converted into PDF</li>
+<li>Folks generating csasdown documents –&gt; due to lack of web
+accessibility issues, LaTeX generated PDFs are not web accessible - thus
+test using word files instead.</li>
+</ul></li>
+</ul></li>
 </ul>
 </div>
 
