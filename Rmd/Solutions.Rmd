@@ -65,7 +65,12 @@ Option1
 - https://github.com/ropensci/tabulizer
 
 ```{r, include=FALSE}
-
+library(remotes)
+library(rJava)
+#remotes::install_github(c("ropensci/tabulizerjars", "ropensci/tabulizer"), INSTALL_opts = "--no-multiarch")
+library(tabulizer)
+tabletest <- "Rs-PholadeTronqueeAtlMudPiddock-v00-2022Aug-Eng.pdf"
+extract_tables(tabletest)
 ```
 
 #### Tabula
