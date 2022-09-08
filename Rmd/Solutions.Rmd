@@ -1,5 +1,5 @@
 ---
-title: " Exploring Solutions"
+title: " Exploring Solutions for extracting recovery measures information from Recovery Documents using Reproducible Analytical Pipelines"
 author: "Strategic RAP Champions"
 date: "`r Sys.Date()`"
 output: 
@@ -68,10 +68,8 @@ Option1
 ```
 
 ### `tabulizer` R Package
-- https://github.com/ropensci/tabulizer
 
-
-Package ‘tabulizer’ was removed from the CRAN repository thus installation was conducted directly from GitHub. This leaves us at the mercy of package developers that could discotninue its mantainance. 
+Package ‘tabulizer’ was removed from the CRAN repository thus installation was conducted directly from GitHub. This leaves us at the mercy of package developers that could discontinue its mantainance. More here: https://github.com/ropensci/tabulizer 
 
 ```{r}
 #remotes::install_github(c("ropensci/tabulizerjars", "ropensci/tabulizer"), INSTALL_opts = "--no-multiarch")
@@ -89,17 +87,26 @@ table4 <- extract_tables(tabletest, pages = 20)
 table4
 ```
 
-The output is a bit convoluted with a series of empty spaces and disjointed/unconnected text. Thus next step is to turn the table extraction into a dataframe to get an output that resembles the original table a tiny bit more, yet ussues prevailed and a bit more tweaking is required (coding side and/or way tabales are designed = the simpler the table, the eaiser for the code to extract it).  
+The output is a bit convoluted with a series of empty spaces and disjointed/unconnected text. Thus next step is to turn the table extraction into a data frame to get an output that resembles the original table a tiny bit more, yet issues prevailed and a bit more tweaking is required (coding side and/or way tables are designed = the simpler the table, the easier for the code to extract it).  
 
 ```{r}
 table4df <- extract_tables(tabletest, pages = 20, output = "data.frame") %>% as.data.frame()
 table4df
 ```
 
+The solution below still requires a bit more development but the simple extraction seems similar to the original table 4. 
+
+```{r}
+library(kableExtra)
+table4df %>% kbl(caption = "Table 4") %>%
+         kable_classic(full_width = F, html_font = "Cambria") 
+```
+
 *Demos*:
-  - https://github.com/ropensci/tabulizer
-  - Tabulizer Package: https://www.youtube.com/watch?v=nlsWjezvsg8
-  - PDF Scrape and exploratory analysis code demo: https://www.business-science.io/code-tools/2019/09/23/tabulizer-pdf-scraping.html#workflow
+
+- https://github.com/ropensci/tabulizer
+- Tabulizer Package: https://www.youtube.com/watch?v=nlsWjezvsg8
+- PDF Scrape and exploratory analysis code demo: https://www.business-science.io/code-tools/2019/09/23/tabulizer-pdf-scraping.html#workflow
 
 ### `docxtractr` R Package
 
@@ -107,7 +114,7 @@ PDFs seem to have some tricky issues consistently observed while trying differen
 
 ![Simplified table in Word](table4-simplified-word.png)
 
-The solution below still requires a bit more development but the simple extraction seems to be more similar to the original table 4. Keeping tables as simple as possible in the word or PDF file is one of the main pieces to implement moving forward. 
+The solution below still requires a bit more development but the simple extraction seems similar to the original table 4. Keeping tables as simple as possible in the word or PDF file is one of the main pieces to implement moving forward. 
 
 ```{r}
 library(docxtractr)
@@ -129,8 +136,9 @@ tbls %>% kbl(caption = "Table 4") %>%
 Software can be used to extract data manually, or folks can implement a solution programatically using python.
 
 *Demos*: 
-  - https://www.youtube.com/watch?v=702lkQbZx50
-  - https://www.youtube.com/watch?v=NvcTIZ2Je50 
+
+- https://www.youtube.com/watch?v=702lkQbZx50
+- https://www.youtube.com/watch?v=NvcTIZ2Je50 
 
 
 ### Azure Form Recognizer
@@ -164,7 +172,8 @@ We have not tested this option yet as there seems to be a price tag associated w
 ## Agenda Meeting 2
 
 ### User stories
-  - DFO staff is tasked with mining tables from Recovery Documents PDF/Word files to organized them in a nice and clean spreadsheet. Below are potential future scenarios of what their experience could be using different approaches.
+
+DFO staff is tasked with mining tables from Recovery Documents PDF/Word files to organized them in a nice and clean spreadsheet. Below are potential future scenarios of what their experience could be using different approaches.
   
 ####  Scenario 1: Staff mines tables directly from current Recovery Document PDF/Word files
 
@@ -176,9 +185,12 @@ These improved documents have metadata (a.k.a. tables) that is mined at the same
 
 #### Scenario 3: Staff takes advantage of a new workflow to store and mine the data from somewhere else 
 
-Mining PDF and Word files is definitively a possiility. However, we are wodnering if there may be a better approach for mining data and storing it in an authoritative place. Data could then be mined from soemthing different than a PDF/Word file... something such as database, excel sheets, which could be populated as part of a submission. 
+Mining PDF and Word files is definitively a possibility. However, we are wodnering if there may be a better approach for mining data and storing it in an authoritative place. Data could then be mined from soemthing different than a PDF/Word file... something such as database, excel sheets, which could be populated as part of a submission. 
 
 The evaluation of any scenario must take into account the time and user experience of i) folks writing/publishing SARA documents, ii) folks mining these documents.
+
+Interesting fact: One of our members of our team did the manual exraction/mining of the same threat tables of the same recovery documents. Solutions for the furure must inlcude to commubicate this type of efforts to support each other and share information.
      
 ### Recommendations for input spreadsheet 
+
 Need a bit of cleaning before interactive report pilot - happy to do cleaning with recommendations on how to keep spreadsheets as clean as possible for coding (Excel spreadsheets, CSV, Databases)
