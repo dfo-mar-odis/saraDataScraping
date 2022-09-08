@@ -15,7 +15,7 @@ library(DiagrammeR)
 
 ## Project Conceptual Diagram 
 
-This document summarizes a collection of solutions for extracting recovery measures information from Recovery Documents using Reproducible Analytical Pipelines. Finddings will help identify best practices for future data entry and reporting. Outcomes of this project will include: 
+This document summarizes a collection of solutions for extracting recovery measures information from Recovery Documents using Reproducible Analytical Pipelines. Findings will help identify best practices for future data entry and reporting. Outcomes of this project will include: 
 
 - Testing and evaluating the use of Reproducible Analytical Pipelines to automate data extraction from SARA recovery documents and Species at Risk geodatabase.  
 
