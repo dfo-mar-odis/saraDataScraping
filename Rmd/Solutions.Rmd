@@ -13,8 +13,17 @@ knitr::opts_chunk$set(echo = TRUE)
 library(DiagrammeR)
 ```
 
-## Project Conceptual Diagram
+## Project Conceptual Diagram 
 
+This document summarizes a collection of solutions for extracting recovery measures information from Recovery Documents using Reproducible Analytical Pipelines. Finddings will help identify best practices for future data entry and reporting. Outcomes of this project will include: 
+
+- Testing and evaluating the use of Reproducible Analytical Pipelines to automate data extraction from SARA recovery documents and Species at Risk geodatabase.  
+
+- Make recommendations regarding document elements (e.g. formatting or codes) required to identify and extract relevant information into a spreadsheet. This will coincide with the Species at Risk Program recovery and implementation team plans to revise Species’ Progress Report templates and other recovery document templates this fiscal year. 
+
+- Conceptual workflow of elements that would be required to reverse-engineer outcomes 1 and 2 (above) by using forms, csv files, or Excel spreadsheets to generate reproducible reports (e.g. using Microsoft PowerBI, R Markdown, or other tools that are easily used and accessible to Species at Risk Program staff). 
+
+For more information about this project, please see the [project proposal:](https://086gc.sharepoint.com/:w:/s/MaritimesSpatialPlanning-MAROpenDataLogistics/EZLu-2jTNt1DgVY_0GsX3eEBtsJwi7xA_vWNSAqwBURbdg) 
 
 ```{r workflow, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -36,7 +45,7 @@ workflow <- DiagrammeR::grViz("digraph {
 workflow
 ```
 
-## Options Step 1 to Step 2
+## Exploration of options for Step 1 to Step 2
 
 ```{r workflow2, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -44,81 +53,112 @@ Option1 <- DiagrammeR::grViz("digraph {
   graph [layout = dot, rankdir = TB]
   
   node [shape = rectangle]        
-  rec1 [label = 'PDF and/or embedded metadata']
-  rec2 [label = 'Tool']
-  rec3 [label = 'Data Frame']
+  rec1 [label = 'Table in a PDF of selected Recovery Documents']
+  rec2 [label = 'Tool e.g. R, Python, and others']
+  rec3 [label = 'Table Extraction']
+  rec4 [label = 'Data Frame']
 
-  rec1 -> rec2 -> rec3 
+  rec1 -> rec2 -> rec3 -> rec4 
   }",
   height = 500)
 ```
-
+Exploring solutions if tables in PDFs are the preffered way to store information
 ```{r workflow plot2}
 Option1
 ```
 
-#### Azure Form Recognizer
-
-- [Azure Form Recognizer](https://docs.microsoft.com/en-us/azure/applied-ai-services/form-recognizer/overview?WT.mc_id=aiml-14201-cassieb&tabs=v3-0) is a cloud-based Azure Applied AI Service that analyzes forms and documents, extracts text and data, and maps field relationships as key-value pairs: https://formrecognizer.appliedai.azure.com/studio
-
-#### `tabulizer` R Package
+### `tabulizer` R Package
 - https://github.com/ropensci/tabulizer
 
-```{r, include=FALSE}
-library(remotes)
-library(rJava)
+
+Package ‘tabulizer’ was removed from the CRAN repository thus installation was conducted directly from GitHub. This leaves us at the mercy of package developers that could discotninue its mantainance. 
+
+```{r}
 #remotes::install_github(c("ropensci/tabulizerjars", "ropensci/tabulizer"), INSTALL_opts = "--no-multiarch")
-library(tabulizer)
-#tabletest <- "Rs-PholadeTronqueeAtlMudPiddock-v00-2022Aug-Eng.pdf"
-#extract_tables(tabletest)
 ```
 
-#### Tabula
-- https://tabula.technology/  -- software can be used to extract data manually, or folks can implement a solution programatically using python? https://www.youtube.com/watch?v=702lkQbZx50
+![Original screenshot of table in the PDF](table4.png)
 
-## Demos
+```{r}
+library(remotes)
+library(rJava)
+library(tabulizer)
+tabletest <- "Rs-PholadeTronqueeAtlMudPiddock-v00-2022Aug-Eng.pdf"
+#fullextraction <- extract_tables(tabletest) # You may uncomment this line if you would like to extract tables form the whole document.
+table4 <- extract_tables(tabletest, pages = 20)
+table4
+```
 
-#### Azure Form Recognizer
-- https://www.youtube.com/watch?v=rkJa6vbkMcU
-- https://github.com/Azure-Samples/cognitive-services-quickstart-code/blob/master/python/FormRecognizer/rest/python-train-extract.md
+The output is a bit convoluted with a series of empty spaces and disjointed/unconnected text. Thus next step is to turn the table extraction into a dataframe to get an output that resembles the original table a tiny bit more, yet ussues prevailed and a bit more tweaking is required (coding side and/or way tabales are designed = the simpler the table, the eaiser for the code to extract it).  
 
-#### R packages
-- https://github.com/ropensci/tabulizer
-- Tabulizer Package: https://www.youtube.com/watch?v=nlsWjezvsg8
-- PDF Scrape and exploratory analysis code demo: https://www.business-science.io/code-tools/2019/09/23/tabulizer-pdf-scraping.html#workflow
+```{r}
+table4df <- extract_tables(tabletest, pages = 20, output = "data.frame") %>% as.data.frame()
+table4df
+```
 
-#### Tabula
-- https://www.youtube.com/watch?v=NvcTIZ2Je50 
+*Demos*:
+  - https://github.com/ropensci/tabulizer
+  - Tabulizer Package: https://www.youtube.com/watch?v=nlsWjezvsg8
+  - PDF Scrape and exploratory analysis code demo: https://www.business-science.io/code-tools/2019/09/23/tabulizer-pdf-scraping.html#workflow
+
+### `docxtractr` R Package
+
+PDFs seem to have some tricky issues consistently observed while trying different solutions. What about Word Files? We saved Table 4 as a separate Word file and tested `docxtractr` R Package. 
+
+![Simplified table in Word](table4-simplified-word.png)
+
+The solution below still requires a bit more development but the simple extraction seems to be more similar to the original table 4. Keeping tables as simple as possible in the word or PDF file is one of the main pieces to implement moving forward. 
+
+```{r}
+library(docxtractr)
+tabletestdocx <-  read_docx("table4.docx")
+docx_tbl_count(tabletestdocx)
+tbls <- docx_extract_all_tbls(tabletestdocx)
+tbls
+```
+
+```{r}
+library(kableExtra)
+tbls %>% kbl(caption = "Table 4") %>%
+         kable_classic(full_width = F, html_font = "Cambria") 
+```
+
+### Tabula
+
+- Tabula is free and open source. Tabula was created by journalists for journalists and anyone else working with data locked away in PDFs. https://tabula.technology/  
+Software can be used to extract data manually, or folks can implement a solution programatically using python.
+
+*Demos*: 
+  - https://www.youtube.com/watch?v=702lkQbZx50
+  - https://www.youtube.com/watch?v=NvcTIZ2Je50 
 
 
-## Pros 
+### Azure Form Recognizer
 
-- Azure Form Recognizer allows coordination with tools withing our Microsoft Suite
-- Azure Form Recognizer -- Powered with Python?
-- Tabula is free and open source. Tabula was created by journalists for journalists and anyone else working with data locked away in PDFs. 
+[Azure Form Recognizer](https://docs.microsoft.com/en-us/azure/applied-ai-services/form-recognizer/overview?WT.mc_id=aiml-14201-cassieb&tabs=v3-0) is a cloud-based Azure Applied AI Service that analyzes forms and documents, extracts text and data, and maps field relationships as key-value pairs: https://formrecognizer.appliedai.azure.com/studio
 
-## Cons 
+Azure Form Recognizer could potentially allow coordination with tools withing our Microsoft Suite. It is powered by Python. 
 
-- Azure Form Recognizer does not seem to exist in our current suite of tools? (I logged in a ticket) or maybe there is somehting we can dowlonad easily?
-- Not an open source solution (0-500 pages are free per month, after that, there is a cost associated with using this tool https://azure.microsoft.com/en-ca/pricing/details/form-recognizer/)
-- Tabulizer Package seems to have a lot of dependencies and bit of a convoluted process to install it (not tested yet) - may need admin privileges
-- Package ‘tabulizer’ was removed from the CRAN repository.
-- Tabula:
+Azure Form Recognizer does not seem to exist in our current suite of tools but we logged in a ticket with IT. It does not seem to be an open source solution (0-500 pages are free per month, after that, there is a cost associated with using this tool https://azure.microsoft.com/en-ca/pricing/details/form-recognizer/)
+
+We have not tested this option yet as there seems to be a price tag associated with number of pages depending on the capacity of data mining. 
+
+*Demos*:
+
+  - https://www.youtube.com/watch?v=rkJa6vbkMcU
+  - https://github.com/Azure-Samples/cognitive-services-quickstart-code/blob/master/python/FormRecognizer/rest/python-train-extract.md
 
 
 ## Flags & Questions TBD 
 
-- Are PDFs the best way to store metadata (a.k.a) tables from Recovery Documents?
-  - if no, why not, and what solutions can we offer?
-  - if yes, is there any guidance we could provide for the tables themselves? this potential guidance will apply for two potential scenarios:
-    - Folks working in a word document that gets converted into PDF
-    - Folks generating csasdown documents --> due to lack of web accessibility issues, LaTeX generated PDFs are not web accessible - thus testing using word files instead may be key. 
-- Folks writing SARA documents: would they be interested in reporting key tables in the PDF as well as an additional database?
-- Folks mining these documents: what is their background? a solution involving programming may require a coding background?
-- In the future, would the Recovery Documents PDF/Word host the authoritative data to be mined in the future? or is there interest in exploring additional options to store metadata (a.k.a. tables)?
+  - Are PDFs or Word Files the best way to store metadata (a.k.a) tables from Recovery Documents?
+    - maybe? if very specific conditions are applied for every future publication. This could increase time folks spend formatting. 
+    - If not, why not, and what solutions can we offer? Instead of spending time formatting, is there a betetr solution for management of this type of data? This involves:
+         - Folks writing SARA documents: would they be interested in reporting key tables in the PDF as well as an additional database?
+         - Folks mining these documents: what is their background? a solution involving programming may require a coding background?
 - When mining tables in the future from the Recovery Document PDF/Word file:
-  - Do you envision mining tables directly from the Recovery Document PDF/Word file?
-  - Or are you open to recommendations in the workflow to store and mine the data from somewhere else (e.g. database, excel sheets populated as part of submission)?
+   - Do you envision mining tables directly from the Recovery Document PDF/Word file directly? We could slect one of the options presented in this document to explore further.
+   - Or are you open to recommendations in the workflow to store and mine the data from somewhere else (e.g. database, excel sheets populated as part of submission)?
 
 
 ## Agenda Meeting 2
