@@ -49,7 +49,7 @@ workflow <- DiagrammeR::grViz("digraph {
 workflow
 ```
 
-## Exploration of options for Step 1 to Step 2
+## Exploration of options for Step 1 to Step 2: Examples below display outcomes for Table 4 of Mud-Piddock Recovery Assessment.
 
 ```{r workflow2, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -66,12 +66,12 @@ Option1 <- DiagrammeR::grViz("digraph {
   }",
   height = 500)
 ```
-Exploring solutions if tables in PDFs are the prefered way to store information
+Exploring solutions if tables in PDFs are the preferred way to store information
 ```{r workflow plot2}
 Option1
 ```
 
-Exaples below display outcomes for Table 4 of Mud-Piddock Recovery Assessment. 
+Examples below display outcomes for Table 4 of Mud-Piddock Recovery Assessment. 
 
 ![Original screenshot of table in the PDF](table4.png)
 
@@ -196,6 +196,113 @@ We have not tested this option yet as there seems to be a price tag associated w
   - https://github.com/Azure-Samples/cognitive-services-quickstart-code/blob/master/python/FormRecognizer/rest/python-train-extract.md
 
 
+## Exploration of options for Step 1 to Step 2: Examples below display outcomes for full Mud-Piddock Recovery Assessment Word document
+
+Mining tables from Word files proved to be the most effective solution using the least amount of coding and manipulation. We therefore proceeded to test the full Recovery Assessment document for Mud-Piddock, using the most promising solutions.  
+
+```{r}
+DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = rectangle]        
+  rec1 [label = 'PDF Recovery Documents']
+  rec2 [label = 'Create Word Recovery Document using Foxit']
+  rec3 [label = 'Identify key terms of tables to be extracted in the Word document']
+  rec4 [label = 'Extract relevant tables programatatically']
+
+  rec1 -> rec2 -> rec3 -> rec4 
+  }",
+  height = 500)
+```
+
+### `docxtractr` R Package
+
+```{r}
+library(docxtractr)
+testdocx <-  read_docx("Rs-PholadeTronqueeAtlMudPiddock-v00-2022Aug-Eng.docx")
+docx_tbl_count(testdocx)
+alltables <- docx_extract_all_tbls(testdocx)
+str(alltables)
+```
+
+```{r}
+library(kableExtra)
+alltables[[1]] %>% kbl(caption = "Testing Full Extraction of Tables") %>%
+         kable_classic(full_width = F, html_font = "Cambria") 
+```
+
+Word files seem to be providing a really nice output. Our next task now is to identify which tables specifically will be mined. For this, we manually compared the [spreadsheet information](https://086gc.sharepoint.com/:x:/s/NatureLegacyDatabase/ETYmtFpJ9AZOvNfXyHrAPTABOdFZi_XDRDUuZaIqSHo8tA) shared by the SARA Program and the source document/word file used for this test. 
+
+Column Name in Word Doc Table    | Column Name in Spreadsheet
+-------------                    | -------------       
+Species                          | Species Name         
+Threat                           | Not included         
+Geographic scale                 | Not included      
+Likelihood of occurrence         | Not included      
+Level of impact                  | Not included      
+Causal certainty                 | Not included
+Threat risk                      | Not included
+Threat occurrence                | Not included
+Threat frequency                 | Not included
+Threat extent                    | Not included
+General description of research and management approaches | Recovery Measures/ Conservation Measures  
+Priority                         | Not included
+Broad strategy                   | Not included
+Threat or concern addressed      | Not included
+
+
+Column Name in Spreadsheet       | Column Name in Word Doc Table 
+-------------                    | -------------       
+Destignatable Unit (DU)          | Not included         
+Taxon	                           | Not included      
+COSEWIC Status                	 | Not included      
+SARA Status	
+Lead Region
+Broad Strategy
+Document Used	
+Document Reference
+
+
+Column name in Spreadsheet Tab Recovery Measure  | Column name in Spreadsheet Tab Recovery Measure Tracking
+-------------                                    | -------------       
+Recovery Measures/ Conservation Measures         | AP: Recovery Measures
+
+
+## Agenda Meeting 2
+
+### User stories
+
+DFO staff is tasked with mining tables from Recovery Documents PDF/Word files to organized them in a nice and clean spreadsheet for future reporting. Below are potential future scenarios of what their experience could be using different approaches.
+  
+####  Scenario 1: Staff mines tables directly from current Recovery Document PDF/Word files
+
+Staff mine tables that have weird double lines, non matching lines and background white lines separating the cells. Significant amount of extra coding and tweaking is required for each table is a customized fashion. This scenario is a bit cumbersome and requires extra manipulation.    
+
+#### Scenario 2: Staff mines tables directly from improved Recovery Document Word files. 
+
+Staff mine tables directly from Word files provided by the authors, or generated from the authoritative PDFs using software like Foxit. Staff mine tables easily because authors rigorously applied the following recommendations for each table:
+
+- Tables rows do not break from page to page
+- Columns names are unique, short, succinct, and fully standardized in *all* recovery documents  
+...
+
+#### Scenario 3: Staff mines tables directly from Recovery Document Word files that include additional metadata. 
+
+Improved Word documents follow explicit guidance to create tables have metadata (a.k.a. tables) that is mined at the same time as the filepath when scraping the doc.
+
+#### Scenario 4: Staff takes advantage of a new workflow to store and mine the data from somewhere else 
+
+Mining PDF and Word files is a possibility. However, is there a better approach for mining data and storing it in an authoritative place. Data could then be mined from something different than a PDF/Word file... something such as database, excel sheets, which could be populated as part of a submission. 
+
+The evaluation of any scenario must take into account the time and user experience of i) folks writing/publishing SARA documents, ii) folks mining these documents.
+
+Interesting fact: One of our members of our team did the manual extraction/mining of the same threat tables of the same recovery documents. Solutions for the future must include to communicate this type of efforts to support each other and share information.
+     
+### Recommendations for input spreadsheet 
+
+Need a bit of cleaning before interactive report pilot - happy to do cleaning with recommendations on how to keep spreadsheets as clean as possible for coding (Excel spreadsheets, CSV, Databases)
+
+
 ## Flags & Questions TBD 
 
   - Are PDFs or Word Files the best way to store metadata (a.k.a) tables from Recovery Documents?
@@ -206,30 +313,3 @@ We have not tested this option yet as there seems to be a price tag associated w
 - When mining tables in the future from the Recovery Document PDF/Word file:
    - Do you envision mining tables directly from the Recovery Document PDF/Word file directly? We could slect one of the options presented in this document to explore further.
    - Or are you open to recommendations in the workflow to store and mine the data from somewhere else (e.g. database, excel sheets populated as part of submission)?
-
-
-## Agenda Meeting 2
-
-### User stories
-
-DFO staff is tasked with mining tables from Recovery Documents PDF/Word files to organized them in a nice and clean spreadsheet. Below are potential future scenarios of what their experience could be using different approaches.
-  
-####  Scenario 1: Staff mines tables directly from current Recovery Document PDF/Word files
-
-Staff finds interesting tables that ahve weird double lines, non matching lines and background white lines separating the cells.  
-
-#### Scenario 2: Staff mines tables directly from improved Recovery Document PDF/Word files. 
-
-These improved documents have metadata (a.k.a. tables) that is mined at the same time as the filepath when scraping the doc.
-
-#### Scenario 3: Staff takes advantage of a new workflow to store and mine the data from somewhere else 
-
-Mining PDF and Word files is definitively a possibility. However, we are wodnering if there may be a better approach for mining data and storing it in an authoritative place. Data could then be mined from soemthing different than a PDF/Word file... something such as database, excel sheets, which could be populated as part of a submission. 
-
-The evaluation of any scenario must take into account the time and user experience of i) folks writing/publishing SARA documents, ii) folks mining these documents.
-
-Interesting fact: One of our members of our team did the manual exraction/mining of the same threat tables of the same recovery documents. Solutions for the furure must inlcude to commubicate this type of efforts to support each other and share information.
-     
-### Recommendations for input spreadsheet 
-
-Need a bit of cleaning before interactive report pilot - happy to do cleaning with recommendations on how to keep spreadsheets as clean as possible for coding (Excel spreadsheets, CSV, Databases)
