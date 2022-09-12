@@ -11,6 +11,10 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(DiagrammeR)
+
+library(reticulate)
+use_python("../venv/Scripts")
+
 ```
 
 ## Project Conceptual Diagram 
@@ -134,6 +138,36 @@ library(kableExtra)
 tbls %>% kbl(caption = "Table 4") %>%
          kable_classic(full_width = F, html_font = "Cambria") 
 ```
+
+### `Camelot` Python Package
+Camelot is a python package, installable from Pip that can extract tables from a PDF based on the lines between cells (Lattice).  This helps improve the quality of the parsed data.
+
+``` {python camelot_example}
+from camelot import read_pdf
+
+doc_file_path = "Rs-PholadeTronqueeAtlMudPiddock-v00-2022Aug-Eng.pdf"
+df_list = read_pdf(doc_file_path, pages="20", line_scale=50)
+# this is a list, because there might be more than one table on the page
+# print everything:
+print(df_list[0].df.to_string())
+```
+There are a couple potential issues with this method.  Special characters are explitly recorded (newlines are saved as \n) and items such as graphs can be mistaken as tables.
+
+
+### `Docx` Python Package
+Docx is a python package, installable from Pip (`pip install python-docx`) that can extract tables from word documents.
+
+``` {python docx_example}
+from docx import Document
+recovery_docx = Document("Rs-PholadeTronqueeAtlMudPiddock-v00-2022Aug-Eng.docx")
+# recovery_docx.tables is a list containing all of the tables in the docx, print the 3rd one:
+for row in recovery_docx.tables[3].columns:
+    for cell in row.cells:
+        print(cell.text)
+
+```
+This method produces a very reliable output that is fairly easy to work with.
+
 
 ### Tabula
 

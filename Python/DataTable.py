@@ -24,6 +24,6 @@ class TableDoc():
 
 # sample use case:
 # from Python.DataTable import TableDoc
-# test_table = TableDoc("temp/Ap-BlueWhaleNwRorqualBleu-v00-2020Juil-Eng.pdf")
+# test_table = TableDoc("Rmd/Rs-PholadeTronqueeAtlMudPiddock-v00-2022Aug-Eng.docx")
 # test_table = TableDoc("temp/Mp-Sowerbys-v00-2017Apr-Eng.pdf")
 # test_table.scrape_pdf()
