@@ -23,7 +23,7 @@ This document summarizes a collection of solutions for extracting recovery measu
 
 - Conceptual workflow of elements that would be required to reverse-engineer outcomes 1 and 2 (above) by using forms, csv files, or Excel spreadsheets to generate reproducible reports (e.g. using Microsoft PowerBI, R Markdown, or other tools that are easily used and accessible to Species at Risk Program staff). 
 
-For more information about this project, please see the [project proposal:](https://086gc.sharepoint.com/:w:/s/MaritimesSpatialPlanning-MAROpenDataLogistics/EZLu-2jTNt1DgVY_0GsX3eEBtsJwi7xA_vWNSAqwBURbdg) 
+For more information about this project, please see the [project proposal.](https://086gc.sharepoint.com/:w:/s/MaritimesSpatialPlanning-MAROpenDataLogistics/EZLu-2jTNt1DgVY_0GsX3eEBtsJwi7xA_vWNSAqwBURbdg) 
 
 ```{r workflow, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -53,7 +53,7 @@ Option1 <- DiagrammeR::grViz("digraph {
   graph [layout = dot, rankdir = TB]
   
   node [shape = rectangle]        
-  rec1 [label = 'Table in a PDF of selected Recovery Documents']
+  rec1 [label = 'Table in PDF/Word of selected Recovery Documents']
   rec2 [label = 'Tool e.g. R, Python, and others']
   rec3 [label = 'Table Extraction']
   rec4 [label = 'Data Frame']
@@ -62,10 +62,15 @@ Option1 <- DiagrammeR::grViz("digraph {
   }",
   height = 500)
 ```
-Exploring solutions if tables in PDFs are the preffered way to store information
+Exploring solutions if tables in PDFs are the prefered way to store information
 ```{r workflow plot2}
 Option1
 ```
+
+Exaples below display outcomes for Table 4 of Mud-Piddock Recovery Assessment. 
+
+![Original screenshot of table in the PDF](table4.png)
+
 
 ### `tabulizer` R Package
 
@@ -75,7 +80,7 @@ Package ‘tabulizer’ was removed from the CRAN repository thus installation w
 #remotes::install_github(c("ropensci/tabulizerjars", "ropensci/tabulizer"), INSTALL_opts = "--no-multiarch")
 ```
 
-![Original screenshot of table in the PDF](table4.png)
+
 
 ```{r}
 library(remotes)
