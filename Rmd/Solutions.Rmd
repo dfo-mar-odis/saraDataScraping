@@ -140,7 +140,7 @@ tbls %>% kbl(caption = "Table 4") %>%
 ```
 
 ### `Camelot` Python Package
-Camelot is a python package, installable from Pip that can extract tables from a PDF based on the lines between cells (Lattice).  This helps improve the quality of the parsed data.
+Camelot is a python package, installable from Pip ([instructions here](https://camelot-py.readthedocs.io/en/master/user/install.html)) that can extract tables from a PDF based on the lines between cells (Lattice).  This helps improve the quality of the parsed data.
 
 ``` {python camelot_example}
 from camelot import read_pdf
@@ -151,7 +151,11 @@ df_list = read_pdf(doc_file_path, pages="20", line_scale=50)
 # print everything:
 print(df_list[0].df.to_string())
 ```
+<<<<<<< HEAD
 There are a couple potential issues with this method.  Special characters are explicitly recorded (newlines are saved as \n) and items such as graphs can be mistaken as tables.
+=======
+There are a couple potential issues with this method.  Special characters are explitly recorded (newlines are saved as \\n) and items such as graphs can be mistaken as tables.
+>>>>>>> 62035c24090e9449b6e7ce5e07767046ad6d05e2
 
 
 ### `Docx` Python Package
@@ -161,8 +165,8 @@ Docx is a python package, installable from Pip (`pip install python-docx`) that 
 from docx import Document
 recovery_docx = Document("Rs-PholadeTronqueeAtlMudPiddock-v00-2022Aug-Eng.docx")
 # recovery_docx.tables is a list containing all of the tables in the docx, print the 3rd one:
-for row in recovery_docx.tables[3].columns:
-    for cell in row.cells:
+for col in recovery_docx.tables[3].columns:
+    for cell in col.cells:
         print(cell.text)
 
 ```
