@@ -1,33 +1,45 @@
 import pandas as pd
 from camelot import read_pdf, plot
 from docx import Document
+import os
+import errno
 
 
 class TableDoc:
     """ Either a Resdoc, recovery plan or action plan document containing
     tabular data to parse and save.
     """
-
+    metadata_dict = {}
     doc_path = ""
-    df_list = []
+    dt_list = []  # doc table list
+    out_df = pd.DataFrame()
 
     def __init__(self, doc_file_path):
-        self.doc_path = doc_file_path
-
-    def scrape_pdf(self, *args, **kwargs):
-        # line_scale = 50 is useful
-        self.df_list = read_pdf(self.doc_path, pages="all", *args, **kwargs)
-
-    def scrape_word(self, *args, **kwargs):
-        # TODO
-        # function that extracts all the tables from a word doc and saves them to self.df_list
-        recovery_docx = Document(self.doc_path)
-        self.df_list = "foo"
+        # make sure the filepath exists and is either a pdf or a Word doc:
+        if not os.path.isfile(doc_file_path):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), doc_file_path)
+        elif doc_file_path.endswith((".doc", ".docx", ".pdf")):
+            raise Exception("File type not supported, must be PDF or Word document.")
+        else:
+            self.doc_path = doc_file_path
 
     def scrape_doc(self):
-        # TODO
         # checks if doc is word or pdf and scrapes it accordingly
-        pass
+        if self.doc_path.endswith((".doc", ".docx")):
+            self.scrape_word()
+        elif self.doc_path.endswith(".pdf"):
+            self.scrape_pdf()
+        else:
+            raise Exception("File type not supported, must be PDF or Word document.")
+
+    def scrape_pdf(self, line_scale=50):
+        self.dt_list = read_pdf(self.doc_path, pages="all", line_scale=line_scale)
+
+    def scrape_word(self):
+        # function that extracts all the tables from a Word doc and saves them to self.dt_list as DocTable objects
+        recovery_docx = Document(self.doc_path)
+        self.dt_list = [DocTable(raw_table) for raw_table in recovery_docx.tables]
+        self.dt_list = [dt for dt in self.dt_list if dt.is_valid]
 
     def get_metadata(self):
         # TODO
@@ -58,10 +70,15 @@ class DocTable:
     """ An individual table as extracted from the document in DocTable
     """
     df = pd.DataFrame()
+    is_valid = False  # is this a valid table with data?
+    is_measures_table = False  # does this table contain recovery measures?
+    is_metadata_table = False  # does this table contain metadata?
 
-    def __init__(self, dataTable):
+    def __init__(self, raw_table):
         # TODO
         # upon init, the input datatable should get stored as a class attribute
+        self.valid = self.clean()
+
         pass
 
     def clean(self):
@@ -75,6 +92,11 @@ class DocTable:
     def set_headers(self):
         # TODO
         # set the first row as the column headers
+        pass
+
+    def set_table_type(self):
+        # TODO
+        # sets whether table is metadata or measures or other
         pass
 
     def merge_tables(self, table_to_merge):
