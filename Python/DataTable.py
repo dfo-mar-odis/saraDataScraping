@@ -76,10 +76,10 @@ class DocTable:
 
     def __init__(self, raw_table):
         # TODO
-        # upon init, the input datatable should get stored as a class attribute
-        self.valid = self.clean()
-
-        pass
+        # upon init, the input datatable should get cleaned, classified and stored as a class attribute
+        # self.df = steps_to_make_this_a_panda(raw_table)
+        self.set_headers()
+        self.clean()
 
     def clean(self):
         # TODO
@@ -87,7 +87,7 @@ class DocTable:
         # is it empty?
         # do the headers match?
         # etc.
-        pass
+        self.is_valid = False
 
     def set_headers(self):
         # TODO
