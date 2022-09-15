@@ -9,16 +9,19 @@ class TableDoc:
     """ Either a Resdoc, recovery plan or action plan document containing
     tabular data to parse and save.
     """
-    metadata_dict = {}
-    doc_path = ""
-    dt_list = []  # doc table list
-    out_df = pd.DataFrame()
 
     def __init__(self, doc_file_path):
+        self.metadata_dict = {}
+        self.doc_path = ""
+        self.dt_list = []  # doc table list
+        self.measures_list = []
+        self.out_dt = None
+
         # make sure the filepath exists and is either a pdf or a Word doc:
+
         if not os.path.isfile(doc_file_path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), doc_file_path)
-        elif doc_file_path.endswith((".doc", ".docx", ".pdf")):
+        elif not doc_file_path.endswith((".doc", ".docx", ".pdf")):
             raise Exception("File type not supported, must be PDF or Word document.")
         else:
             self.doc_path = doc_file_path
@@ -40,6 +43,7 @@ class TableDoc:
         recovery_docx = Document(self.doc_path)
         self.dt_list = [DocTable(raw_table) for raw_table in recovery_docx.tables]
         self.dt_list = [dt for dt in self.dt_list if dt.is_valid]
+        self.measures_list = [dt for dt in self.dt_list if dt.is_measures_table]
 
     def get_metadata(self):
         # TODO
@@ -47,10 +51,11 @@ class TableDoc:
         pass
 
     def join_data(self):
-        # TODO
-        # loops through self.df_list and converts all the tables into a single output, ready for writting into an
+        # loops through self.measures_list and converts all the tables into a single output, ready for writting into an
         # excel/etc.
-        pass
+        self.out_dt = DocTable(None)
+        for measure_dt in self.measures_list:
+            self.out_dt.merge_tables(measure_dt)
 
     def write_to_excel(self):
         # TODO
@@ -69,17 +74,20 @@ class TableDoc:
 class DocTable:
     """ An individual table as extracted from the document in DocTable
     """
-    df = pd.DataFrame()
-    is_valid = False  # is this a valid table with data?
-    is_measures_table = False  # does this table contain recovery measures?
-    is_metadata_table = False  # does this table contain metadata?
 
     def __init__(self, raw_table):
+        self.df = pd.DataFrame()
+        self.is_valid = True  # is this a valid table with data?
+        self.is_measures_table = False  # does this table contain recovery measures?
+        self.is_metadata_table = False  # does this table contain metadata?
+
         # TODO
         # upon init, the input datatable should get cleaned, classified and stored as a class attribute
+        # should also handle the empty table case i.e. raw_table = None
         # self.df = steps_to_make_this_a_panda(raw_table)
-        self.set_headers()
-        self.clean()
+        # self.set_headers()
+        # self.clean()
+        self.df = raw_table
 
     def clean(self):
         # TODO
