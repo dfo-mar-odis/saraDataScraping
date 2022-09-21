@@ -1,8 +1,12 @@
 import pandas as pd
 from camelot import read_pdf, plot
-from docx import Document
+from docx import Document, table
 import os
 import errno
+from openpyxl import load_workbook
+
+MEASURES_HEADERS = ["#", "Recovery measures"]
+METADATA_HEADERS = ["Species name", "Designatable Unit", "Taxon", "COSEWIC Status", "SARA Status", "Lead Region"]
 
 
 class TableDoc:
@@ -25,6 +29,8 @@ class TableDoc:
             raise Exception("File type not supported, must be PDF or Word document.")
         else:
             self.doc_path = doc_file_path
+
+        self.scrape_doc()
 
     def scrape_doc(self):
         # checks if doc is word or pdf and scrapes it accordingly
@@ -53,14 +59,21 @@ class TableDoc:
     def join_data(self):
         # loops through self.measures_list and converts all the tables into a single output, ready for writting into an
         # excel/etc.
-        self.out_dt = DocTable(None)
-        for measure_dt in self.measures_list:
-            self.out_dt.merge_tables(measure_dt)
+        if len(self.measures_list):
+            self.out_dt = self.measures_list[0]
+            for measure_dt in self.measures_list[1:]:
+                self.out_dt.merge_tables(measure_dt.df)
 
     def write_to_excel(self):
         # TODO
         # Writes the output df into an excel sheet and returns with the whole sheet, or the pathname.
-        pass
+        # settings.BASE_DIR
+        # figure out the filename
+        target_dir = os.path.join('media', 'temp')
+        target_file = "temp_export.xlsx"
+        target_file_path = os.path.join(target_dir, target_file)
+        self.out_dt.df.to_excel(target_file_path)
+        return target_file_path
 
     def show_grid_lines(self, table_index):
         # shows the grid lines for camelot tables, useful for debugging
@@ -81,38 +94,55 @@ class DocTable:
         self.is_measures_table = False  # does this table contain recovery measures?
         self.is_metadata_table = False  # does this table contain metadata?
 
-        # TODO
         # upon init, the input datatable should get cleaned, classified and stored as a class attribute
         # should also handle the empty table case i.e. raw_table = None
-        # self.df = steps_to_make_this_a_panda(raw_table)
-        # self.set_headers()
-        # self.clean()
-        self.df = raw_table
+        if raw_table is not None and type(raw_table) == table.Table:
+            self.df = docx_table_to_pd(raw_table)
+            self.clean()
 
     def clean(self):
-        # TODO
-        # The input table should be converted into a pd dataframe, with various checks
-        # is it empty?
-        # do the headers match?
-        # etc.
-        self.is_valid = False
+        # The input table should be converted into a pd dataframe, with various checks to set flags
+        # remove regex values
+        self.df = self.df.replace(r'\r+|\n+|\t+', '', regex=True)
+        self.set_headers()
+        self.set_table_type()
+
+        self.is_valid = True
 
     def set_headers(self):
-        # TODO
-        # set the first row as the column headers
-        pass
+        # set the first row as the column headers, code from:
+        # https://stackoverflow.com/questions/31328861/python-pandas-replacing-header-with-top-row
+        new_header = self.df.iloc[0]  # grab the first row for the header
+        self.df = self.df[1:]  # take the data less the header row
+        self.df.columns = new_header  # set the header row as the df header
 
     def set_table_type(self):
-        # TODO
-        # sets whether table is metadata or measures or other
-        pass
+        # sets the flag and drops any uneeded columns
+        if all([mh in self.df.columns for mh in MEASURES_HEADERS]):
+            self.is_measures_table = True
+            self.df = self.df[MEASURES_HEADERS]
 
-    def merge_tables(self, table_to_merge):
+        if all([mh in self.df.columns for mh in METADATA_HEADERS]):
+            self.is_metadata_table = True
+            self.df = self.df[METADATA_HEADERS]
+
+    def merge_tables(self, df_to_merge):
         # TODO
         # Merge this table with another valid DocTable
-        pass
+        # look into this to merge rows split over pages: https://stackoverflow.com/questions/40733386/python-pandas-merge-rows-if-some-values-are-blank
+        self.df = pd.concat([self.df, df_to_merge], axis=0)
 
     def add_metadata(self, metadata_values):
         # TODO
         # given some metadata, add those columns to every row of df
         pass
+
+
+def docx_table_to_pd(docx_table):
+    # magic code taken from https://stackoverflow.com/questions/58254609/python-docx-parse-a-table-to-panda-dataframe
+    df = [['' for i in range(len(docx_table.columns))] for j in range(len(docx_table.rows))]
+    for i, row in enumerate(docx_table.rows):
+        for j, cell in enumerate(row.cells):
+            if cell.text:
+                df[i][j] = cell.text
+    return pd.DataFrame(df)
