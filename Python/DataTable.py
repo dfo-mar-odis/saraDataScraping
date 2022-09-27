@@ -1,11 +1,16 @@
 import pandas as pd
+import numpy as np
 from camelot import read_pdf, plot
 from docx import Document, table
 import os
 import errno
-from openpyxl import load_workbook
+import tkinter as tk
+from tkinter import filedialog
+
 
 MEASURES_HEADERS = ["#", "Recovery measures"]
+INDEX_HEADER = "#"
+JOIN_HEADER = "Recovery measures"
 METADATA_HEADERS = ["Species name", "Designatable Unit", "Taxon", "COSEWIC Status", "SARA Status", "Lead Region"]
 
 
@@ -14,7 +19,7 @@ class TableDoc:
     tabular data to parse and save.
     """
 
-    def __init__(self, doc_file_path):
+    def __init__(self, doc_file_path=None):
         self.metadata_dict = {}
         self.doc_path = ""
         self.dt_list = []  # doc table list
@@ -22,6 +27,10 @@ class TableDoc:
         self.out_dt = None
 
         # make sure the filepath exists and is either a pdf or a Word doc:
+        if not doc_file_path:
+            root = tk.Tk()
+            root.withdraw()
+            doc_file_path = filedialog.askopenfilename()
 
         if not os.path.isfile(doc_file_path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), doc_file_path)
@@ -31,6 +40,7 @@ class TableDoc:
             self.doc_path = doc_file_path
 
         self.scrape_doc()
+        self.join_data()
 
     def scrape_doc(self):
         # checks if doc is word or pdf and scrapes it accordingly
@@ -64,16 +74,14 @@ class TableDoc:
             for measure_dt in self.measures_list[1:]:
                 self.out_dt.merge_tables(measure_dt.df)
 
-    def write_to_excel(self):
+    def write_to_excel(self, outpath):
         # TODO
         # Writes the output df into an excel sheet and returns with the whole sheet, or the pathname.
         # settings.BASE_DIR
         # figure out the filename
-        target_dir = os.path.join('media', 'temp')
-        target_file = "temp_export.xlsx"
-        target_file_path = os.path.join(target_dir, target_file)
-        self.out_dt.df.to_excel(target_file_path)
-        return target_file_path
+        self.out_dt.df.to_excel(outpath, index=False)
+        os.startfile(outpath)
+
 
     def show_grid_lines(self, table_index):
         # shows the grid lines for camelot tables, useful for debugging
@@ -104,6 +112,7 @@ class DocTable:
         # The input table should be converted into a pd dataframe, with various checks to set flags
         # remove regex values
         self.df = self.df.replace(r'\r+|\n+|\t+', '', regex=True)
+        self.df = self.df.replace('', np.nan)
         self.set_headers()
         self.set_table_type()
 
@@ -127,10 +136,13 @@ class DocTable:
             self.df = self.df[METADATA_HEADERS]
 
     def merge_tables(self, df_to_merge):
-        # TODO
         # Merge this table with another valid DocTable
-        # look into this to merge rows split over pages: https://stackoverflow.com/questions/40733386/python-pandas-merge-rows-if-some-values-are-blank
+        # look into this to merge rows split over pages:
+        # https://stackoverflow.com/questions/40733386/python-pandas-merge-rows-if-some-values-are-blank
         self.df = pd.concat([self.df, df_to_merge], axis=0)
+        # forward fill in any empty index column values:
+        self.df.loc[:, INDEX_HEADER] = self.df.loc[:, INDEX_HEADER].ffill()
+        self.df = self.df.groupby([INDEX_HEADER], as_index=False, sort=False)[JOIN_HEADER].apply(lambda x: ' '.join(x.astype(str)))
 
     def add_metadata(self, metadata_values):
         # TODO
