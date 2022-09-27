@@ -52,6 +52,7 @@ class TableDoc:
             raise Exception("File type not supported, must be PDF or Word document.")
 
     def scrape_pdf(self, line_scale=50):
+        # very not supported yet....
         self.dt_list = read_pdf(self.doc_path, pages="all", line_scale=line_scale)
 
     def scrape_word(self):
@@ -75,19 +76,17 @@ class TableDoc:
                 self.out_dt.merge_tables(measure_dt.df)
 
     def write_to_excel(self, outpath):
-        # TODO
-        # Writes the output df into an excel sheet and returns with the whole sheet, or the pathname.
-        # settings.BASE_DIR
-        # figure out the filename
+        # Writes the output df into an excel sheet and opens the sheet
         self.out_dt.df.to_excel(outpath, index=False)
         os.startfile(outpath)
 
-
     def show_grid_lines(self, table_index):
+        # for pdfs
         # shows the grid lines for camelot tables, useful for debugging
         return plot(self.df_list[table_index], kind='grid').show()
 
     def parser_report(self, table_index):
+        # for pdfs
         # shows the report for a camelot table, may be useful for QC
         return self.df_list[table_index].parsing_report
 
@@ -98,40 +97,38 @@ class DocTable:
 
     def __init__(self, raw_table):
         self.df = pd.DataFrame()
-        self.is_valid = True  # is this a valid table with data?
+        self.is_valid = False  # is this a valid table with data?
         self.is_measures_table = False  # does this table contain recovery measures?
         self.is_metadata_table = False  # does this table contain metadata?
 
         # upon init, the input datatable should get cleaned, classified and stored as a class attribute
-        # should also handle the empty table case i.e. raw_table = None
         if raw_table is not None and type(raw_table) == table.Table:
             self.df = docx_table_to_pd(raw_table)
             self.clean()
+            self.set_headers()
+            self.set_table_type()
+            self.is_valid = True
 
     def clean(self):
         # The input table should be converted into a pd dataframe, with various checks to set flags
         # remove regex values
         self.df = self.df.replace(r'\r+|\n+|\t+', '', regex=True)
         self.df = self.df.replace('', np.nan)
-        self.set_headers()
-        self.set_table_type()
-
-        self.is_valid = True
 
     def set_headers(self):
         # set the first row as the column headers, code from:
         # https://stackoverflow.com/questions/31328861/python-pandas-replacing-header-with-top-row
-        new_header = self.df.iloc[0]  # grab the first row for the header
-        self.df = self.df[1:]  # take the data less the header row
-        self.df.columns = new_header  # set the header row as the df header
+        new_header = self.df.iloc[0]
+        self.df = self.df[1:]
+        self.df.columns = new_header
 
     def set_table_type(self):
         # sets the flag and drops any uneeded columns
-        if all([mh in self.df.columns for mh in MEASURES_HEADERS]):
+        if all([header in self.df.columns for header in MEASURES_HEADERS]):
             self.is_measures_table = True
             self.df = self.df[MEASURES_HEADERS]
 
-        if all([mh in self.df.columns for mh in METADATA_HEADERS]):
+        if all([header in self.df.columns for header in METADATA_HEADERS]):
             self.is_metadata_table = True
             self.df = self.df[METADATA_HEADERS]
 
