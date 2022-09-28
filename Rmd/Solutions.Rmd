@@ -275,20 +275,7 @@ The above mentioned changes have led to the following key words to mine the two 
 Note: solutions will not be case sensitive.
 
 
-## Recommendations:
-The exploration performed above has produced the following recommendations for extracting tables from recovery documents:
-- While tables can be extracted from both Word and PDF documents, Word documents produce accurate results with far fewer formating requierements.
-- Python and R are both viable options to perform the extraction.
-- The metadata fields should also be included in the scraping process, possibly in the form iof user input or a metadata table added to the document.
-
-Additionally, the following recomendations are made for the actual formating of the tables inside the recovery documents:
-- Tables rows do not break from page to page
-- Columns names are unique, short, succinct, and fully standardized in *all* recovery documents
-- Unique column names are KEY because code will be looking for those in the tables extracted
-- Do not use numbers/codes in the values of tables. Please use text to make the mining process as simple as possible.e.g. instead of using "1" for Broad strategy, use the direct wording "Research and monitoring"
-
-
-Mining tables from Word files proved to be the most effective solution using the least amount of coding and manipulation. We briefly tested one of the documents with the new proposed tables. 
+Mining tables from Word files proved to be the most effective solution using the least amount of coding and manipulation. We briefly tested one of the documents with the new proposed tables.
 
 ```{r}
 library(docxtractr)
@@ -304,7 +291,7 @@ alltables[[1]] %>% kbl(caption = "Testing Full Extraction of Tables") %>%
          kable_classic(full_width = F, html_font = "Cambria") 
 ```
 
-## User Stories
+## User Stories and Recommendations
 
 DFO staff is tasked with mining tables from Recovery Documents PDF/Word files to organized them in a nice and clean spreadsheet for future reporting. Below are potential future scenarios of what their experience could be using different approaches.
   
