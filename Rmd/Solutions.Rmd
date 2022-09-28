@@ -1,6 +1,6 @@
 ---
 title: " Exploring Solutions for extracting recovery measures information from Recovery Documents using Reproducible Analytical Pipelines"
-author: "Strategic RAP Champions"
+author: "Strategic RAP Champions [Quentin Stoyel & Catalina Gomez]"
 date: "`r Sys.Date()`"
 output: 
   html_document:
@@ -66,25 +66,22 @@ Option1 <- DiagrammeR::grViz("digraph {
   }",
   height = 500)
 ```
-Exploring solutions if tables in PDFs are the preferred way to store information
+
 ```{r workflow plot2}
 Option1
 ```
-
-Examples below display outcomes for Table 4 of Mud-Piddock Recovery Assessment. 
+This first section provides a summary of solutions if tables in PDFs are the preferred way to store information. Examples below display outcomes for Table 4 of Mud-Piddock Recovery Assessment. 
 
 ![Original screenshot of table in the PDF](table4.png)
 
 
 ### `tabulizer` R Package
 
-Package ‘tabulizer’ was removed from the CRAN repository thus installation was conducted directly from GitHub. This leaves us at the mercy of package developers that could discontinue its mantainance. More here: https://github.com/ropensci/tabulizer 
+tabulizer provides R bindings to the Tabula java library, which can be used to computationaly extract tables from PDF documents. Package ‘tabulizer’ was removed from the CRAN repository thus installation was conducted directly from GitHub. This could leave us at the mercy of package developers that could discontinue its maintenance. More here: https://github.com/ropensci/tabulizer 
 
 ```{r}
 #remotes::install_github(c("ropensci/tabulizerjars", "ropensci/tabulizer"), INSTALL_opts = "--no-multiarch")
 ```
-
-
 
 ```{r}
 library(remotes)
@@ -121,7 +118,7 @@ table4df %>% kbl(caption = "Table 4") %>%
 
 PDFs seem to have some tricky issues consistently observed while trying different solutions. What about Word Files? We saved Table 4 as a separate Word file and tested `docxtractr` R Package. 
 
-![Simplified table in Word](table4-simplified-word.png)
+![screenshot of table in Word is displayed above.](table4-simplified-word.png)
 
 The solution below still requires a bit more development but the simple extraction seems similar to the original table 4. Keeping tables as simple as possible in the word or PDF file is one of the main pieces to implement moving forward. 
 
@@ -140,7 +137,7 @@ tbls %>% kbl(caption = "Table 4") %>%
 ```
 
 ### `Camelot` Python Package
-Camelot is a python package, installable from Pip ([instructions here](https://camelot-py.readthedocs.io/en/master/user/install.html)) that can extract tables from a PDF based on the lines between cells (Lattice).  This helps improve the quality of the parsed data.
+Camelot is a python package, installable from Pip that can extract tables from a PDF based on the lines between cells (Lattice).  This helps improve the quality of the parsed data.
 
 ``` {python camelot_example}
 from camelot import read_pdf
@@ -151,11 +148,7 @@ df_list = read_pdf(doc_file_path, pages="20", line_scale=50)
 # print everything:
 print(df_list[0].df.to_string())
 ```
-<<<<<<< HEAD
 There are a couple potential issues with this method.  Special characters are explicitly recorded (newlines are saved as \n) and items such as graphs can be mistaken as tables.
-=======
-There are a couple potential issues with this method.  Special characters are explitly recorded (newlines are saved as \\n) and items such as graphs can be mistaken as tables.
->>>>>>> 62035c24090e9449b6e7ce5e07767046ad6d05e2
 
 
 ### `Docx` Python Package
@@ -165,13 +158,12 @@ Docx is a python package, installable from Pip (`pip install python-docx`) that 
 from docx import Document
 recovery_docx = Document("Rs-PholadeTronqueeAtlMudPiddock-v00-2022Aug-Eng.docx")
 # recovery_docx.tables is a list containing all of the tables in the docx, print the 3rd one:
-for col in recovery_docx.tables[3].columns:
-    for cell in col.cells:
+for row in recovery_docx.tables[3].columns:
+    for cell in row.cells:
         print(cell.text)
 
 ```
 This method produces a very reliable output that is fairly easy to work with.
-
 
 ### Tabula
 
@@ -190,7 +182,7 @@ Software can be used to extract data manually, or folks can implement a solution
 
 Azure Form Recognizer could potentially allow coordination with tools withing our Microsoft Suite. It is powered by Python. 
 
-Azure Form Recognizer does not seem to exist in our current suite of tools but we logged in a ticket with IT. It does not seem to be an open source solution (0-500 pages are free per month, after that, there is a cost associated with using this tool https://azure.microsoft.com/en-ca/pricing/details/form-recognizer/)
+Azure Form Recognizer does not exist in our current suite of tools. We logged in a ticket with IT and they confirmed that in order to complete our request we would need you fill out a form so that software can be evaluated by IT security before installing to make sure it is safe to have it on our network. It does not seem to be an open source solution (0-500 pages are free per month, after that, there is a cost associated with using this tool https://azure.microsoft.com/en-ca/pricing/details/form-recognizer/)
 
 We have not tested this option yet as there seems to be a price tag associated with number of pages depending on the capacity of data mining. 
 
@@ -200,9 +192,7 @@ We have not tested this option yet as there seems to be a price tag associated w
   - https://github.com/Azure-Samples/cognitive-services-quickstart-code/blob/master/python/FormRecognizer/rest/python-train-extract.md
 
 
-## Exploration of options for Step 1 to Step 2: Examples below display outcomes for full Mud-Piddock Recovery Assessment Word document
-
-Mining tables from Word files proved to be the most effective solution using the least amount of coding and manipulation. We therefore proceeded to test the full Recovery Assessment document for Mud-Piddock, using the most promising solutions.  
+## Implementing solutions for Step 1 to Step 2: Examples below display outcomes for two Word Documents slighly modified
 
 ```{r}
 DiagrammeR::grViz("digraph {
@@ -212,30 +202,14 @@ DiagrammeR::grViz("digraph {
   rec1 [label = 'PDF Recovery Documents']
   rec2 [label = 'Create Word Recovery Document using Foxit']
   rec3 [label = 'Identify key terms of tables to be extracted in the Word document']
-  rec4 [label = 'Extract relevant tables programatatically']
+  rec4 [label = 'Test extraction of relevant tables']
 
   rec1 -> rec2 -> rec3 -> rec4 
   }",
   height = 500)
 ```
 
-### `docxtractr` R Package
-
-```{r}
-library(docxtractr)
-testdocx <-  read_docx("Rs-PholadeTronqueeAtlMudPiddock-v00-2022Aug-Eng.docx")
-docx_tbl_count(testdocx)
-alltables <- docx_extract_all_tbls(testdocx)
-str(alltables)
-```
-
-```{r}
-library(kableExtra)
-alltables[[1]] %>% kbl(caption = "Testing Full Extraction of Tables") %>%
-         kable_classic(full_width = F, html_font = "Cambria") 
-```
-
-Word files seem to be providing a really nice output. Our next task now is to identify which tables specifically will be mined. For this, we manually compared the [spreadsheet information](https://086gc.sharepoint.com/:x:/s/NatureLegacyDatabase/ETYmtFpJ9AZOvNfXyHrAPTABOdFZi_XDRDUuZaIqSHo8tA) shared by the SARA Program and the source document/word file used for this test (Atlantic Mud-piddock). 
+Word files seem to be providing a really nice output. Our next task was to explore which tables specifically will be mined. For this, we manually compared the [spreadsheet information](https://086gc.sharepoint.com/:x:/s/NatureLegacyDatabase/ETYmtFpJ9AZOvNfXyHrAPTABOdFZi_XDRDUuZaIqSHo8tA) shared by the SARA Program and the source document/word files for Atlantic Mud-piddock and Blue whale. 
 
 Column Name in Word Doc Table    | Column Name in Spreadsheet
 -------------                    | -------------       
@@ -275,14 +249,14 @@ We tested the process of adding a potential new table in the Recovery Documents/
 
 ![Proposed new table](proposed-new-table.png)
 
-We also modified and standardized names of the additional columns to be mined from the word documents into the spreadsheets. These are tentative names until SARA Program decides which names could be used systematically in all future documents in the future. This will make the process of minig tables significantly simpler as the codes will be looking for this unique names within tables. For this test, we did the following changes in the two word documents: 
+We also modified and standardized names of the additional columns to be mined from the word documents into the spreadsheets. These are tentative names until SARA Program decides which names could be used systematically in all future documents. This will make the process of mining tables significantly simpler as the codes will be looking for this unique names within tables. For this test, we did the following changes in the two word documents: 
 
-- The symbol "#" to indicate the number of the Recovery Measure was replaced with "Measure ID" [code does not like "#", right?]. 
-- "General description of research and management approaches" in mud-piddock and "Recovery measures" in Blue Whale was replaced with the column name "Detailed Measures"
+- The symbol "#" to indicate the number of the Recovery Measure was replaced with "Measure ID" 
+- "General description of research and management approaches" in Atlantic mud-piddock and "Recovery measures" in Blue Whale was replaced with the column name "Detailed Measures"
 - "Measure ID" and "Detailed Measures" were combined in the blue whale document; we separated them into two columns for the blue whale document to match the requirements in the spreadsheet and the mud-piddock document.
 - Values in the "Broad strategy" column were replaced with text instead of code numbers, to match the blue whale recovery document and to make the process of mining info as simple as possible e.g. "1" was replaced with "Research and monitoring"
  
-The above mentioned changes have led to the following key words to be used to mine the two test recover documents:
+The above mentioned changes have led to the following key words to mine the two test word documents:
 
 - Measure ID
 - Detailed Measures
@@ -295,52 +269,50 @@ The above mentioned changes have led to the following key words to be used to mi
 - Lead Region	
 - Document Used
 
-Note: solution should not be case sensitive. 
+Note: solutions will not be case sensitive. 
 
-Created or edited tables/column nam,es in two test word files for blue whale and mud-piddock to make the process of mining info more simple.
+Mining tables from Word files proved to be the most effective solution using the least amount of coding and manipulation. We briefly tested one of the documents with the new proposed tables. 
 
+```{r}
+library(docxtractr)
+testdocx <-  read_docx("Rs-PholadeTronqueeAtlMudPiddock-v00-2022Aug-Eng.docx")
+docx_tbl_count(testdocx)
+alltables <- docx_extract_all_tbls(testdocx)
+str(alltables)
+```
 
+```{r}
+library(kableExtra)
+alltables[[1]] %>% kbl(caption = "Testing Full Extraction of Tables") %>%
+         kable_classic(full_width = F, html_font = "Cambria") 
+```
 
-
-
-
-
-
-## Agenda Meeting 2
-
-### User stories
+## User Stories
 
 DFO staff is tasked with mining tables from Recovery Documents PDF/Word files to organized them in a nice and clean spreadsheet for future reporting. Below are potential future scenarios of what their experience could be using different approaches.
   
 ####  Scenario 1: Staff mines tables directly from current Recovery Document PDF/Word files
 
-Staff mine tables that have weird double lines, non matching lines and background white lines separating the cells. Significant amount of extra coding and tweaking is required for each table is a customized fashion. This scenario is a bit cumbersome and requires extra manipulation.    
+Staff mine tables that have weird double lines, non matching lines and background white lines separating the cells. Significant amount of manual intervention, extra coding and tweaking is required for each table in a customized fashion. This scenario is a bit cumbersome and requires extra manipulation.    
 
-#### Scenario 2: Staff mines tables directly from improved Recovery Document Word files. 
+#### Scenario 2: Staff mines tables directly from improved Recovery Document Word files that include additional metadata (a.k.a. tables). 
 
-Staff mine tables directly from Word files provided by the authors, or generated from the authoritative PDFs using software like Foxit. Staff mine tables easily because authors rigorously applied the following recommendations for each table:
+Using a Reproducible Analytical Pipeline, staff mine tables directly from improved Word files provided by the authors, or generated from the authoritative PDFs using software like Foxit. Improved Word documents follow explicit guidance to create metadata (a.k.a. tables) that are mined at the same time as the filepath when scraping the document. Staff mine tables efficiently and easily because authors rigorously applied the following recommendations for each table:
 
 - Tables rows do not break from page to page
 - Columns names are unique, short, succinct, and fully standardized in *all* recovery documents  
 - Unique column names are KEY because code will be looking for those in the tables extracted 
-- Do not use numbers/codes in the values of tables. Please use text to make the mining process as simple as possible.e.g. instead of using "1" for Broad strategy, use the direct wording "Research and monitoring"
+- Tables do not include numbers/codes in the values of tables. Instead, tables include standardized text to make the mining process as simple as possible e.g. instead of using "1" for coding Broad strategies, staff use the direct wording "Research and monitoring".
 
-#### Scenario 3: Staff mines tables directly from Recovery Document Word files that include additional metadata. 
+#### Scenario 3: Staff takes advantage of a new workflow to store and mine the data using a GUI
 
-Improved Word documents follow explicit guidance to create tables have metadata (a.k.a. tables) that is mined at the same time as the filepath when scraping the doc.
+Mining PDF and Word files is a possibility. Is there a better approach for mining data and storing it in an authoritative place? Data could be mined from something different than a PDF/Word file. Something such as database, excel sheets, GUI, which could be populated as part of a submission. In this case, standardized tables are not a deal breaker for mining information.
 
-#### Scenario 4: Staff takes advantage of a new workflow to store and mine the data using a GUI
+The evaluation of any scenario must take into account the time and user experience of i) folks writing/publishing SARA documents, ii) folks mining these documents, iii) Staff needed to maintain new tools.
 
-Mining PDF and Word files is a possibility. However, is there a better approach for mining data and storing it in an authoritative place. Data could then be mined from something different than a PDF/Word file... something such as database, excel sheets, GUI, which could be populated as part of a submission. 
-
-The evaluation of any scenario must take into account the time and user experience of i) folks writing/publishing SARA documents, ii) folks mining these documents.
-
-Interesting fact: One of our members of our team did the manual extraction/mining of the same threat tables of the same recovery documents. Solutions for the future must include to communicate this type of efforts to support each other and share information.
-     
 ### Recommendations for input spreadsheet 
 
 Need a bit of cleaning before interactive report pilot - happy to do cleaning with recommendations on how to keep spreadsheets as clean as possible for coding (Excel spreadsheets, CSV, Databases)
-
 
 ## Flags & Questions TBD 
 
