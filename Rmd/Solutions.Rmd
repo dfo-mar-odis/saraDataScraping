@@ -36,8 +36,8 @@ workflow <- DiagrammeR::grViz("digraph {
   
   node [shape = rectangle]        
   rec1 [label = 'Step 1. Recovery Document Table [PDF, Word, or...]']
-  rec2 [label = 'Step 2. Data Frame']
-  rec3 [label = 'Step 3. Data Frame to csv, excel or...']
+  rec2 [label = 'Step 2. Data Frame [In R, Python, or ...]']
+  rec3 [label = 'Step 3. File [csv, excel or...]']
   rec4 [label = 'Step 4. Reporting [interactive reporting web-based and customized static reporting]']
   
   rec1 -> rec2 -> rec3 -> rec4
@@ -151,11 +151,7 @@ df_list = read_pdf(doc_file_path, pages="20", line_scale=50)
 # print everything:
 print(df_list[0].df.to_string())
 ```
-<<<<<<< HEAD
-There are a couple potential issues with this method.  Special characters are explicitly recorded (newlines are saved as \n) and items such as graphs can be mistaken as tables.
-=======
 There are a couple potential issues with this method.  Special characters are explitly recorded (newlines are saved as \\n) and items such as graphs can be mistaken as tables.
->>>>>>> 62035c24090e9449b6e7ce5e07767046ad6d05e2
 
 
 ### `Docx` Python Package
@@ -277,7 +273,7 @@ We tested the process of adding a potential new table in the Recovery Documents/
 
 We also modified and standardized names of the additional columns to be mined from the word documents into the spreadsheets. These are tentative names until SARA Program decides which names could be used systematically in all future documents in the future. This will make the process of minig tables significantly simpler as the codes will be looking for this unique names within tables. For this test, we did the following changes in the two word documents: 
 
-- The symbol "#" to indicate the number of the Recovery Measure was replaced with "Measure ID" [code does not like "#", right?]. 
+- The symbol "#" to indicate the number of the Recovery Measure was replaced with "Measure ID".
 - "General description of research and management approaches" in mud-piddock and "Recovery measures" in Blue Whale was replaced with the column name "Detailed Measures"
 - "Measure ID" and "Detailed Measures" were combined in the blue whale document; we separated them into two columns for the blue whale document to match the requirements in the spreadsheet and the mud-piddock document.
 - Values in the "Broad strategy" column were replaced with text instead of code numbers, to match the blue whale recovery document and to make the process of mining info as simple as possible e.g. "1" was replaced with "Research and monitoring"
@@ -297,11 +293,21 @@ The above mentioned changes have led to the following key words to be used to mi
 
 Note: solution should not be case sensitive. 
 
-Created or edited tables/column nam,es in two test word files for blue whale and mud-piddock to make the process of mining info more simple.
+Created or edited tables/column names in two test word files for blue whale and mud-piddock to make the process of mining info more simple.
 
 
 
+## Recommendations:
+The exploration performed above has produced the following recommendations for extracting tables from recovery documents:
+- While tables can be extracted from both Word and PDF documents, Word documents produce accurate results with far fewer formating requierements.
+- Python and R are both viable options to perform the extraction.
+- The metadata fields should also be included in the scraping process, possibly in the form iof user input or a metadata table added to the document.
 
+Additionally, the following recomendations are made for the actual formating of the tables inside the recovery documents:
+- Tables rows do not break from page to page
+- Columns names are unique, short, succinct, and fully standardized in *all* recovery documents
+- Unique column names are KEY because code will be looking for those in the tables extracted
+- Do not use numbers/codes in the values of tables. Please use text to make the mining process as simple as possible.e.g. instead of using "1" for Broad strategy, use the direct wording "Research and monitoring"
 
 
 
