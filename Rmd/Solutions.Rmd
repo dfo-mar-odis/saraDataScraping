@@ -317,10 +317,7 @@ Need a bit of cleaning before interactive report pilot - happy to do cleaning wi
 ## Flags & Questions TBD 
 
   - Are PDFs or Word Files the best way to store metadata (a.k.a) tables from Recovery Documents?
-    - maybe? if very specific conditions are applied for every future publication. This could increase time folks spend formatting. 
-    - If not, why not, and what solutions can we offer? Instead of spending time formatting, is there a betetr solution for management of this type of data? This involves:
-         - Folks writing SARA documents: would they be interested in reporting key tables in the PDF as well as an additional database?
-         - Folks mining these documents: what is their background? a solution involving programming may require a coding background?
+    - Word seems to work great particularly if very specific conditions are applied for every future publication. This could increase time folks spend formatting. 
 - When mining tables in the future from the Recovery Document PDF/Word file:
    - Do you envision mining tables directly from the Recovery Document PDF/Word file directly? We could slect one of the options presented in this document to explore further.
    - Or are you open to recommendations in the workflow to store and mine the data from somewhere else (e.g. database, excel sheets populated as part of submission)?
