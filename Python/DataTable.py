@@ -4,7 +4,7 @@ from camelot import read_pdf, plot
 from docx import Document, table
 import os
 import errno
-import tkinter as tk
+from tkinter import *
 from tkinter import filedialog
 
 
@@ -21,26 +21,25 @@ class TableDoc:
 
     def __init__(self, doc_file_path=None):
         self.metadata_dict = {}
-        self.doc_path = ""
+        self.doc_path = doc_file_path
         self.dt_list = []  # doc table list
         self.measures_list = []
         self.out_dt = None
 
         # make sure the filepath exists and is either a pdf or a Word doc:
-        if not doc_file_path:
-            root = tk.Tk()
-            root.withdraw()
-            doc_file_path = filedialog.askopenfilename()
+        if not self.doc_path:
+            gui = TkGui()
+            self.doc_path = gui.table_doc_path
+            self.metadata_dict = gui.get_masterlist_metadata()
 
-        if not os.path.isfile(doc_file_path):
+        if not os.path.isfile(self.doc_path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), doc_file_path)
         elif not doc_file_path.endswith((".doc", ".docx", ".pdf")):
             raise Exception("File type not supported, must be PDF or Word document.")
-        else:
-            self.doc_path = doc_file_path
 
         self.scrape_doc()
         self.join_data()
+
 
     def scrape_doc(self):
         # checks if doc is word or pdf and scrapes it accordingly
@@ -155,3 +154,65 @@ def docx_table_to_pd(docx_table):
             if cell.text:
                 df[i][j] = cell.text
     return pd.DataFrame(df)
+
+
+class TkGui:
+    def __init__(self):
+        self.table_doc_path = ""
+        self.master_index_dict = {}
+        self.masterlist_df = pd.DataFrame()
+
+        self.master = Tk()
+        self.master.geometry("400x400")
+
+        self.master.title("SAR Data Scraper")
+
+        # vars:
+        masterlist_button = Button(self.master, text="Select SAR masterlist", command=self.set_masterlist)
+        masterlist_button.pack()
+
+        self.species_dropdown = StringVar(self.master)
+        self.species_option_menu = OptionMenu(self.master, self.species_dropdown, [])
+        self.species_option_menu.pack()
+
+        table_doc_button = Button(self.master, text="Select SAR Document", command=self.set_table_doc_path)
+        table_doc_button.pack()
+        self.master.mainloop()
+        # gui get's closed in set_table_doc_path method, once path is obtained.
+
+    def set_masterlist(self):
+        masterlist_path = filedialog.askopenfilename()
+        if masterlist_path:
+            try:
+                self.masterlist_df = pd.read_csv(masterlist_path)
+                self.masterlist_df["dropdown_text"] = self.masterlist_df["COMMON_E"] + ", " + self.masterlist_df["POP_E"] + " population. (" + \
+                                    self.masterlist_df["LEAD_REG_E"] + ")"
+
+                self.master_index_dict = {v: k for k, v in self.masterlist_df['dropdown_text'].to_dict().items()}
+                self._reset_option_menu(self.master_index_dict.keys())
+            except:
+                raise Exception("Invalid masterlist selected. Should be a .csv take from SARA SDE")
+
+    def get_masterlist_metadata(self):
+        if self.species_dropdown.get() in self.master_index_dict.keys():
+            return self.masterlist_df.loc[[self.master_index_dict[self.species_dropdown.get()]]].to_dict('records')[0]
+        else:
+            return None
+
+    def set_table_doc_path(self):
+        self.table_doc_path = filedialog.askopenfilename()
+        self.master.destroy()
+        print("closed gracefully")
+
+    def _reset_option_menu(self, options):
+        '''reset the values in the option menu
+
+        if index is given, set the value of the menu to
+        the option at the given index
+        '''
+        menu = self.species_option_menu["menu"]
+        menu.delete(0, "end")
+        for string in options:
+            menu.add_command(label=string,
+                             command=lambda value=string:
+                             self.species_dropdown.set(value))
