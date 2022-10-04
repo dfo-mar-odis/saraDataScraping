@@ -11,8 +11,8 @@ from tkinter import filedialog
 MEASURES_HEADERS = ["#", "Recovery measures"]
 INDEX_HEADER = "#"
 JOIN_HEADER = "Recovery measures"
-METADATA_HEADERS = ["Species name", "Designatable Unit", "Taxon", "COSEWIC Status", "SARA Status", "Lead Region"]
-
+METADATA_HEADERS = ["Species name", "Population", "Scientific Name", "Taxon", "COSEWIC Status", "SARA Status", "Lead Region"]
+RAW_METADATA = ['COMMON_E', 'POP_E', 'SCIENTIFIC', 'TAXON_E', 'COSEWIC_E', 'SARASTAT_E', 'LEAD_REG_E']
 
 class TableDoc:
     """ Either a Resdoc, recovery plan or action plan document containing
@@ -30,16 +30,17 @@ class TableDoc:
         if not self.doc_path:
             gui = TkGui()
             self.doc_path = gui.table_doc_path
-            self.metadata_dict = gui.get_masterlist_metadata()
+            self.metadata_dict = gui.metadata_dict
+            print(self.metadata_dict)
 
         if not os.path.isfile(self.doc_path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), doc_file_path)
-        elif not doc_file_path.endswith((".doc", ".docx", ".pdf")):
+        elif not self.doc_path.endswith((".doc", ".docx", ".pdf")):
             raise Exception("File type not supported, must be PDF or Word document.")
 
         self.scrape_doc()
         self.join_data()
-
+        self.add_metadata()
 
     def scrape_doc(self):
         # checks if doc is word or pdf and scrapes it accordingly
@@ -61,10 +62,9 @@ class TableDoc:
         self.dt_list = [dt for dt in self.dt_list if dt.is_valid]
         self.measures_list = [dt for dt in self.dt_list if dt.is_measures_table]
 
-    def get_metadata(self):
-        # TODO
-        # either extracts the metadata table from the doc, or takes input parameters, should set class values
-        pass
+    def add_metadata(self):
+        # Append metadata values to the output dt:
+        self.out_dt.add_metadata(self.metadata_dict)
 
     def join_data(self):
         # loops through self.measures_list and converts all the tables into a single output, ready for writting into an
@@ -159,6 +159,8 @@ def docx_table_to_pd(docx_table):
 class TkGui:
     def __init__(self):
         self.table_doc_path = ""
+        self.metadata_dict = {}
+
         self.master_index_dict = {}
         self.masterlist_df = pd.DataFrame()
 
@@ -173,12 +175,16 @@ class TkGui:
 
         self.species_dropdown = StringVar(self.master)
         self.species_option_menu = OptionMenu(self.master, self.species_dropdown, [])
+        self.species_dropdown.trace("w", self.set_masterlist_metadata)
+
         self.species_option_menu.pack()
+
+
 
         table_doc_button = Button(self.master, text="Select SAR Document", command=self.set_table_doc_path)
         table_doc_button.pack()
         self.master.mainloop()
-        # gui get's closed in set_table_doc_path method, once path is obtained.
+        # gui gets closed in set_table_doc_path method, once path is obtained.
 
     def set_masterlist(self):
         masterlist_path = filedialog.askopenfilename()
@@ -193,16 +199,14 @@ class TkGui:
             except:
                 raise Exception("Invalid masterlist selected. Should be a .csv take from SARA SDE")
 
-    def get_masterlist_metadata(self):
+    def set_masterlist_metadata(self, *args):
         if self.species_dropdown.get() in self.master_index_dict.keys():
-            return self.masterlist_df.loc[[self.master_index_dict[self.species_dropdown.get()]]].to_dict('records')[0]
-        else:
-            return None
+            self.metadata_dict = self.masterlist_df.loc[[self.master_index_dict[self.species_dropdown.get()]]].to_dict('records')[0]
 
     def set_table_doc_path(self):
         self.table_doc_path = filedialog.askopenfilename()
         self.master.destroy()
-        print("closed gracefully")
+        print("Frontend closed gracefully")
 
     def _reset_option_menu(self, options):
         '''reset the values in the option menu
