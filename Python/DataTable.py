@@ -141,10 +141,9 @@ class DocTable:
         self.df = self.df.groupby([INDEX_HEADER], as_index=False, sort=False)[JOIN_HEADER].apply(lambda x: ' '.join(x.astype(str)))
 
     def add_metadata(self, metadata_values):
-        # TODO
         # given some metadata, add those columns to every row of df
-        pass
-
+        for key, value in metadata_values.items():
+            self.df[key] = value
 
 def docx_table_to_pd(docx_table):
     # magic code taken from https://stackoverflow.com/questions/58254609/python-docx-parse-a-table-to-panda-dataframe
