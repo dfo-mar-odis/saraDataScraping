@@ -9,3 +9,5 @@ temp/*
 *.html
 *.idea/*
 */__pycache__/*
+/Rmd/delete.pyi
+/Python/humansize.py

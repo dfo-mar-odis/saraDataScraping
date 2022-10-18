@@ -66,7 +66,7 @@ class TableDoc:
         self.out_dt.add_metadata(self.metadata_dict)
 
     def join_data(self):
-        # loops through self.measures_list and converts all the tables into a single output, ready for writting into an
+        # loops through self.measures_list and converts all the tables into a single output, ready for writing into an
         # excel/etc.
         if len(self.measures_list):
             self.out_dt = self.measures_list[0]
@@ -91,6 +91,8 @@ class TableDoc:
 
 class DocTable:
     """ An individual table as extracted from the document in DocTable
+    Each table extracted from the word or PDF files is called a DocTable
+    DocTable is used in class TableDoc
     """
 
     def __init__(self, raw_table):
