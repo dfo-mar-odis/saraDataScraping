@@ -36,8 +36,8 @@ workflow <- DiagrammeR::grViz("digraph {
   
   node [shape = rectangle]        
   rec1 [label = 'Step 1. Recovery Document Table [PDF, Word, or...]']
-  rec2 [label = 'Step 2. Data Frame']
-  rec3 [label = 'Step 3. Data Frame to csv, excel or...']
+  rec2 [label = 'Step 2. Data Frame [In R, Python, or ...]']
+  rec3 [label = 'Step 3. File [csv, excel or...]']
   rec4 [label = 'Step 4. Reporting [interactive reporting web-based and customized static reporting]']
   
   rec1 -> rec2 -> rec3 -> rec4
@@ -139,7 +139,7 @@ tbls %>% kbl(caption = "Table 4") %>%
 ### `Camelot` Python Package
 Camelot is a python package, installable from Pip that can extract tables from a PDF based on the lines between cells (Lattice).  This helps improve the quality of the parsed data.
 
-``` {python camelot_example}
+```{python camelot_example}
 from camelot import read_pdf
 
 doc_file_path = "Rs-PholadeTronqueeAtlMudPiddock-v00-2022Aug-Eng.pdf"
@@ -148,13 +148,14 @@ df_list = read_pdf(doc_file_path, pages="20", line_scale=50)
 # print everything:
 print(df_list[0].df.to_string())
 ```
-There are a couple potential issues with this method.  Special characters are explicitly recorded (newlines are saved as \n) and items such as graphs can be mistaken as tables.
+There are a couple potential issues with this method.  Special characters are explitly recorded (newlines are saved as \\n) and items such as graphs can be mistaken as tables.
+
 
 
 ### `Docx` Python Package
 Docx is a python package, installable from Pip (`pip install python-docx`) that can extract tables from word documents.
 
-``` {python docx_example}
+```{python docx_example}
 from docx import Document
 recovery_docx = Document("Rs-PholadeTronqueeAtlMudPiddock-v00-2022Aug-Eng.docx")
 # recovery_docx.tables is a list containing all of the tables in the docx, print the 3rd one:
@@ -269,9 +270,12 @@ The above mentioned changes have led to the following key words to mine the two 
 - Lead Region	
 - Document Used
 
-Note: solutions will not be case sensitive. 
 
-Mining tables from Word files proved to be the most effective solution using the least amount of coding and manipulation. We briefly tested one of the documents with the new proposed tables. 
+
+Note: solutions will not be case sensitive.
+
+
+Mining tables from Word files proved to be the most effective solution using the least amount of coding and manipulation. We briefly tested one of the documents with the new proposed tables.
 
 ```{r}
 library(docxtractr)
@@ -287,7 +291,7 @@ alltables[[1]] %>% kbl(caption = "Testing Full Extraction of Tables") %>%
          kable_classic(full_width = F, html_font = "Cambria") 
 ```
 
-## User Stories
+## User Stories and Recommendations
 
 DFO staff is tasked with mining tables from Recovery Documents PDF/Word files to organized them in a nice and clean spreadsheet for future reporting. Below are potential future scenarios of what their experience could be using different approaches.
   
