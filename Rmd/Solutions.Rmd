@@ -314,10 +314,62 @@ The evaluation of any scenario must take into account the time and user experien
 
 Need a bit of cleaning before interactive report pilot - happy to do cleaning with recommendations on how to keep spreadsheets as clean as possible for coding (Excel spreadsheets, CSV, Databases)
 
-## Flags & Questions TBD 
+
+###  Flags & Questions TBD 
 
   - Are PDFs or Word Files the best way to store metadata (a.k.a) tables from Recovery Documents?
     - Word seems to work great particularly if very specific conditions are applied for every future publication. This could increase time folks spend formatting. 
 - When mining tables in the future from the Recovery Document PDF/Word file:
    - Do you envision mining tables directly from the Recovery Document PDF/Word file directly? We could slect one of the options presented in this document to explore further.
    - Or are you open to recommendations in the workflow to store and mine the data from somewhere else (e.g. database, excel sheets populated as part of submission)?
+
+
+## Step 2 to Step 3: Elements required to generate reproducible reports 
+
+Conceptual workflow of elements that would be required to reverse-engineer outcomes 1 and 2 (above) by using forms, csv files, or Excel spreadsheets to generate reproducible reports (e.g. using Microsoft PowerBI, R Markdown, or other tools that are easily used and accessible to Species at Risk Program staff).
+
+
+```{r workflow3, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+Option2 <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = rectangle]        
+  rec1 [label = 'Dataframe (csv files, or Excel) or Database']
+  rec2 [label = 'API (e.g. Open Data) or locally sourced']
+  rec3 [label = 'Reproducible Report']
+  rec4 [label = 'Interactive Report e.g. Power BI']
+  rec5 [label = 'Skeleton Word Report e.g. SARAdown Package']
+
+  rec1 -> rec2 -> rec3  rec3 -> rec4  rec3 -> rec5
+  
+  }",
+  height = 500)
+```
+
+```{r workflow plot3}
+Option2
+```
+
+Proposed Milestones:
+
+1. To develop an interactive Power BI tool to play with outputs of the spreadsheets. This interactive outputs can inform reporting, and can support SARA staff explore questions on the fly, using the most up-to-date database or datafame.
+
+2. To explore the feasibility of creating a Word skeleton of a SARA document that will pre-populate as much information as possible in a reproducible manner. To tackle this, we will explore options were users may not need to interact with code directly, but can take advantage of a powerful pipeline.
+
+While there is a steep learning curve to building this pipeline, documents will be much easier to update following the addition of new data as all tables and figures should automatically update. This workflow will also improve the transparency and reproducibility of the work, especially if changes are tracked using git.
+
+To test this idea, we will aim to create a package called SARAdown, which will generate a skeleton word file with information pre-poulated for single-species or multi-species reports. We will test this pilot using the template under development by the SARA program: https://086gc.sharepoint.com/:w:/r/sites/MaritimesSpatialPlanning-MAROpenDataLogistics/_layouts/15/Doc.aspx?action=edit&sourcedoc=%7B5a7c2d52-5121-454f-84d1-947f37bf0658%7D&wdOrigin=TEAMS-ELECTRON.teamsSdk.openFilePreview&wdExp=TEAMS-CONTROL
+
+This project will draw ideas and code from the following packages:
+
+- https://github.com/benmarwick/huskydown
+- https://github.com/ismayc/thesisdown
+- https://github.com/pbs-assess/csasdown
+- https://github.com/nafc-assess/NAFOdown 
+
+
+
+
+
+
