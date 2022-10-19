@@ -16,18 +16,20 @@ class TableDoc:
     tabular data to parse and save.
     """
 
-    def __init__(self, doc_file_path):
+    def __init__(self, doc_file_path, header_dict=None):
         self.metadata_dict = {}
         self.doc_path = doc_file_path
         self.dt_list = []  # doc table list
         self.measures_list = []
         self.out_dt = None
 
-        # headers:
-        self.header_dict = {"measures_headers": [],
-                            "index_header": "",
-                            "join_header": ""
-                            }
+        if header_dict:
+            self.header_dict = header_dict
+        else:
+            self.header_dict = {"measures_headers": [],
+                                "index_header": "",
+                                "join_header": ""
+                                }
 
         # make sure the filepath exists and is either a pdf or a Word doc:
         if not os.path.isfile(self.doc_path):
@@ -36,8 +38,9 @@ class TableDoc:
             raise Exception("File type not supported, must be PDF or Word document.")
 
         self.scrape_doc()
-        self.join_data()
-        self.add_metadata()
+        if header_dict:
+            self.join_data()
+            self.add_metadata()
 
     def scrape_doc(self):
         # checks if doc is word or pdf and scrapes it accordingly
@@ -95,10 +98,14 @@ class DocTable:
 
     def __init__(self, raw_table, header_dict):
         self.df = pd.DataFrame()
-
-        self.measures_headers = header_dict["measures_headers"]
-        self.index_header = header_dict["index_header"]
-        self.join_header = header_dict["join_header"]
+        index_str_list = ["measures_headers", "index_header", "join_header"]
+        if all([index_str in header_dict.keys() for index_str in index_str_list]):
+            self.measures_headers = header_dict["measures_headers"]
+            self.index_header = header_dict["index_header"]
+            self.join_header = header_dict["join_header"]
+        else:
+            raise Exception("Key missing from input header dictionary.  "
+                            "Dictionary must contain the following keys: {}".format(index_str_list))
 
         self.is_valid = False  # is this a valid table with data?
         self.is_measures_table = False  # does this table contain recovery measures?
@@ -126,10 +133,9 @@ class DocTable:
 
     def set_table_type(self):
         # sets the flag and drops any uneeded columns
-        if all([header in self.df.columns for header in self.measures_headers]):
+        if self.measures_headers and all([header in self.df.columns for header in self.measures_headers]):
             self.is_measures_table = True
             self.df = self.df[self.measures_headers]
-
 
     def merge_tables(self, df_to_merge):
         # Merge this table with another valid DocTable
@@ -144,6 +150,7 @@ class DocTable:
         # given some metadata, add those columns to every row of df
         for key, value in metadata_values.items():
             self.df[key] = value
+
 
 def docx_table_to_pd(docx_table):
     # magic code taken from https://stackoverflow.com/questions/58254609/python-docx-parse-a-table-to-panda-dataframe
