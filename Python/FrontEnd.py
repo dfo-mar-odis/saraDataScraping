@@ -26,22 +26,22 @@ class TkGui:
         self.master.title("SAR Data Scraper")
 
         # --------------------- MASTERLIST FRAME ----------------
-        self.mastelist_frame = LabelFrame(self.master, text="Select Species")
-        self.mastelist_frame.grid(row=0, column=0, padx=20, pady=10)
+        self.masterlist_frame = LabelFrame(self.master, text="Select Species")
+        self.masterlist_frame.grid(row=0, column=0, padx=20, pady=10)
 
-        masterlist_label = Label(self.mastelist_frame, text="Select SAR Masterlist")
-        masterlist_button = Button(self.mastelist_frame, text="Select file", command=self.set_masterlist)
+        masterlist_label = Label(self.masterlist_frame, text="Select SAR Masterlist")
+        masterlist_button = Button(self.masterlist_frame, text="Select file", command=self.set_masterlist)
         masterlist_label.grid(row=0, column=0)
         masterlist_button.grid(row=1, column=0)
 
-        species_dropdown_label = Label(self.mastelist_frame, text="Select SAR Species")
-        self.species_dropdown = StringVar(self.mastelist_frame)
-        self.species_option_menu = OptionMenu(self.mastelist_frame, self.species_dropdown, [])
+        species_dropdown_label = Label(self.masterlist_frame, text="Select SAR Species")
+        self.species_dropdown = StringVar(self.masterlist_frame)
+        self.species_option_menu = OptionMenu(self.masterlist_frame, self.species_dropdown, [])
         self.species_dropdown.trace("w", self.set_masterlist_metadata)
         species_dropdown_label.grid(row=0, column=1)
         self.species_option_menu.grid(row=1, column=1)
 
-        self.set_padding(self.mastelist_frame)
+        self.set_padding(self.masterlist_frame)
 
         # ---------------------TABLEDOC FRAME ----------------
         self.tabledoc_frame = LabelFrame(self.master, text="Select Document")
