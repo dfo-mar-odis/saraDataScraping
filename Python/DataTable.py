@@ -4,14 +4,6 @@ from camelot import read_pdf, plot
 from docx import Document, table
 import os
 import errno
-import tkinter as tk
-from tkinter import filedialog
-
-
-MEASURES_HEADERS = ["#", "Recovery measures"]
-INDEX_HEADER = "#"
-JOIN_HEADER = "Recovery measures"
-METADATA_HEADERS = ["Species name", "Designatable Unit", "Taxon", "COSEWIC Status", "SARA Status", "Lead Region"]
 
 
 class TableDoc:
@@ -19,28 +11,36 @@ class TableDoc:
     tabular data to parse and save.
     """
 
-    def __init__(self, doc_file_path=None):
+    def __init__(self, doc_file_path, metadata_dict=None, header_dict=None):
         self.metadata_dict = {}
-        self.doc_path = ""
+        self.doc_path = doc_file_path
         self.dt_list = []  # doc table list
         self.measures_list = []
         self.out_dt = None
 
-        # make sure the filepath exists and is either a pdf or a Word doc:
-        if not doc_file_path:
-            root = tk.Tk()
-            root.withdraw()
-            doc_file_path = filedialog.askopenfilename()
-
-        if not os.path.isfile(doc_file_path):
-            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), doc_file_path)
-        elif not doc_file_path.endswith((".doc", ".docx", ".pdf")):
-            raise Exception("File type not supported, must be PDF or Word document.")
+        if header_dict:
+            self.header_dict = header_dict
         else:
-            self.doc_path = doc_file_path
+            self.header_dict = {"measures_headers": [],
+                                "index_header": "",
+                                "join_header": ""
+                                }
+
+        if metadata_dict:
+            self.metadata_dict = metadata_dict
+        else:
+            self.metadata_dict = {}
+
+        # make sure the filepath exists and is either a pdf or a Word doc:
+        if not os.path.isfile(self.doc_path):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), doc_file_path)
+        elif not self.doc_path.endswith((".doc", ".docx", ".pdf")):
+            raise Exception("File type not supported, must be PDF or Word document.")
 
         self.scrape_doc()
-        self.join_data()
+        if header_dict:
+            self.join_data()
+            self.add_metadata()
 
     def scrape_doc(self):
         # checks if doc is word or pdf and scrapes it accordingly
@@ -58,14 +58,13 @@ class TableDoc:
     def scrape_word(self):
         # function that extracts all the tables from a Word doc and saves them to self.dt_list as DocTable objects
         recovery_docx = Document(self.doc_path)
-        self.dt_list = [DocTable(raw_table) for raw_table in recovery_docx.tables]
+        self.dt_list = [DocTable(raw_table, self.header_dict) for raw_table in recovery_docx.tables]
         self.dt_list = [dt for dt in self.dt_list if dt.is_valid]
         self.measures_list = [dt for dt in self.dt_list if dt.is_measures_table]
 
-    def get_metadata(self):
-        # TODO
-        # either extracts the metadata table from the doc, or takes input parameters, should set class values
-        pass
+    def add_metadata(self):
+        # Append metadata values to the output dt:
+        self.out_dt.add_metadata(self.metadata_dict)
 
     def join_data(self):
         # loops through self.measures_list and converts all the tables into a single output, ready for writing into an
@@ -97,11 +96,19 @@ class DocTable:
     DocTable is used in class TableDoc
     """
 
-    def __init__(self, raw_table):
+    def __init__(self, raw_table, header_dict):
         self.df = pd.DataFrame()
+        index_str_list = ["measures_headers", "index_header", "join_header"]
+        if all([index_str in header_dict.keys() for index_str in index_str_list]):
+            self.measures_headers = header_dict["measures_headers"]
+            self.index_header = header_dict["index_header"]
+            self.join_header = header_dict["join_header"]
+        else:
+            raise Exception("Key missing from input header dictionary.  "
+                            "Dictionary must contain the following keys: {}".format(index_str_list))
+
         self.is_valid = False  # is this a valid table with data?
         self.is_measures_table = False  # does this table contain recovery measures?
-        self.is_metadata_table = False  # does this table contain metadata?
 
         # upon init, the input datatable should get cleaned, classified and stored as a class attribute
         if raw_table is not None and type(raw_table) == table.Table:
@@ -126,13 +133,9 @@ class DocTable:
 
     def set_table_type(self):
         # sets the flag and drops any uneeded columns
-        if all([header in self.df.columns for header in MEASURES_HEADERS]):
+        if self.measures_headers and all([header in self.df.columns for header in self.measures_headers]):
             self.is_measures_table = True
-            self.df = self.df[MEASURES_HEADERS]
-
-        if all([header in self.df.columns for header in METADATA_HEADERS]):
-            self.is_metadata_table = True
-            self.df = self.df[METADATA_HEADERS]
+            self.df = self.df[self.measures_headers]
 
     def merge_tables(self, df_to_merge):
         # Merge this table with another valid DocTable
@@ -140,13 +143,15 @@ class DocTable:
         # https://stackoverflow.com/questions/40733386/python-pandas-merge-rows-if-some-values-are-blank
         self.df = pd.concat([self.df, df_to_merge], axis=0)
         # forward fill in any empty index column values:
-        self.df.loc[:, INDEX_HEADER] = self.df.loc[:, INDEX_HEADER].ffill()
-        self.df = self.df.groupby([INDEX_HEADER], as_index=False, sort=False)[JOIN_HEADER].apply(lambda x: ' '.join(x.astype(str)))
+        if self.index_header:
+            self.df.loc[:, self.index_header] = self.df.loc[:, self.index_header].ffill()
+            if self.join_header:
+                self.df = self.df.groupby([self.index_header], as_index=False, sort=False)[self.join_header].apply(lambda x: ' '.join(x.astype(str)))
 
     def add_metadata(self, metadata_values):
-        # TODO
         # given some metadata, add those columns to every row of df
-        pass
+        for key, value in metadata_values.items():
+            self.df[key] = value
 
 
 def docx_table_to_pd(docx_table):
