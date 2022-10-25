@@ -1,3 +1,5 @@
+import tkinter.messagebox
+
 import pandas as pd
 from tkinter import *
 from tkinter import filedialog
@@ -113,14 +115,15 @@ class TkGui:
         index_col_label.grid(row=0, column=3)
 
         header_row = 1
+        index_var = StringVar()
         for header_index, header in enumerate(header_list):
             header_label = Label(self.headers_frame, text=header)
-            header_tickbox = Checkbutton(self.headers_frame, text="", command=partial(self.set_header_dict, header, "HEADER"),
+            header_tickbox = Checkbutton(self.headers_frame, text="", command=partial(self.set_header_dict, header, "measures_headers"),
                                          onvalue="Is header", offvalue="Is not header")
-            join_tickbox = Checkbutton(self.headers_frame, text="", command=partial(self.set_header_dict, header, "JOIN"),
+            join_tickbox = Checkbutton(self.headers_frame, text="", command=partial(self.set_header_dict, header, "join_header"),
                                        onvalue="Is join header", offvalue="Is not join header")
-            index_tickbox = Checkbutton(self.headers_frame, text="", command=partial(self.set_header_dict, header, "INDEX"),
-                                        onvalue="Is index header", offvalue="Is not index header")
+            index_tickbox = Radiobutton(self.headers_frame, text="", command=partial(self.set_header_dict, header, "index_header"),
+                                        variable=index_var, value=header)
             header_label.grid(row=header_row, column=0)
             header_tickbox.grid(row=header_row, column=1)
             join_tickbox.grid(row=header_row, column=2)
@@ -129,21 +132,16 @@ class TkGui:
 
         self.set_padding(self.headers_frame)
 
-
     def set_header_dict(self, header, switch, *args):
         # this needs to take the value of a checkbox and update the metadata dictionary accordingly.
-        if switch == "HEADER":
-            if header in self.header_dict["measures_headers"]:
-                self.header_dict["measures_headers"].remove(header)
+        if switch in ["measures_headers"]:
+            if header in self.header_dict[switch]:
+                self.header_dict[switch].remove(header)
             else:
-                self.header_dict["measures_headers"].append(header)
-            print(self.header_dict["measures_headers"])
-        if switch == "INDEX":
-            if header != self.header_dict["index_header"]:
-                self.header_dict["index_header"] = header
-        if switch == "JOIN":
-            if header != self.header_dict["join_header"]:
-                self.header_dict["join_header"] = header
+                self.header_dict[switch].append(header)
+        if switch in ["index_header", "join_header"]:
+            if header != self.header_dict[switch]:
+                self.header_dict[switch] = header
 
 
     def set_masterlist_metadata(self, *args):
@@ -158,7 +156,10 @@ class TkGui:
 
     def parse_final_doc(self):
         self.final_doc = TableDoc(self.table_doc_path, metadata_dict=self.metadata_dict, header_dict=self.header_dict)
-        self.final_doc.write_to_excel(self.output_path)
+        try:
+            self.final_doc.write_to_excel(self.output_path)
+        except PermissionError:
+            tkinter.messagebox.showinfo("Error", "Close the excel sheet.")
 
     def _reset_option_menu(self, options):
         """reset the values in the option menu

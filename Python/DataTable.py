@@ -143,8 +143,10 @@ class DocTable:
         # https://stackoverflow.com/questions/40733386/python-pandas-merge-rows-if-some-values-are-blank
         self.df = pd.concat([self.df, df_to_merge], axis=0)
         # forward fill in any empty index column values:
-        self.df.loc[:, self.index_header] = self.df.loc[:, self.index_header].ffill()
-        self.df = self.df.groupby([self.index_header], as_index=False, sort=False)[self.join_header].apply(lambda x: ' '.join(x.astype(str)))
+        if self.index_header:
+            self.df.loc[:, self.index_header] = self.df.loc[:, self.index_header].ffill()
+            if self.join_header:
+                self.df = self.df.groupby([self.index_header], as_index=False, sort=False)[self.join_header].apply(lambda x: ' '.join(x.astype(str)))
 
     def add_metadata(self, metadata_values):
         # given some metadata, add those columns to every row of df
