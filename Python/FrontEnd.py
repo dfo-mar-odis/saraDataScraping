@@ -96,7 +96,7 @@ class TkGui:
         try:
             header_list = eval(selected_string[selected_string.find('['):])
         except:
-            # there are many reasons the above might crash...
+            # there are so many reasons the above might crash...
             raise Exception("CODE BROKEN, selected value of ({}) is causing errors. ".format(selected_string))
 
         self.clear_frame(self.headers_frame)
@@ -142,7 +142,6 @@ class TkGui:
         if switch in ["index_header", "join_header"]:
             if header != self.header_dict[switch]:
                 self.header_dict[switch] = header
-
 
     def set_masterlist_metadata(self, *args):
         if self.species_dropdown.get() in self.master_index_dict.keys():
