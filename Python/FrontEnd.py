@@ -9,6 +9,7 @@ from Python.DataTable import TableDoc
 class TkGui:
     def __init__(self):
         self.table_doc_path = ""
+        self.output_path = "..\\temp\\out.xlsx"
         self.metadata_dict = {}
 
         self.master_index_dict = {}
@@ -97,6 +98,10 @@ class TkGui:
             raise Exception("CODE BROKEN, selected value of ({}) is causing errors. ".format(selected_string))
 
         self.clear_frame(self.headers_frame)
+        self.header_dict = {"measures_headers": [],
+                            "index_header": "",
+                            "join_header": ""
+                            }
 
         header_col_label = Label(self.headers_frame, text="Column Name")
         tickbox_col_label = Label(self.headers_frame, text="Coulmn to save?")
@@ -110,11 +115,11 @@ class TkGui:
         header_row = 1
         for header_index, header in enumerate(header_list):
             header_label = Label(self.headers_frame, text=header)
-            header_tickbox = Checkbutton(self.headers_frame, text="", command=partial(self.set_metadata_dict, header_index, header_list),
+            header_tickbox = Checkbutton(self.headers_frame, text="", command=partial(self.set_header_dict, header, "HEADER"),
                                          onvalue="Is header", offvalue="Is not header")
-            join_tickbox = Checkbutton(self.headers_frame, text="", command=partial(self.set_metadata_dict, header_index, header_list),
+            join_tickbox = Checkbutton(self.headers_frame, text="", command=partial(self.set_header_dict, header, "JOIN"),
                                        onvalue="Is join header", offvalue="Is not join header")
-            index_tickbox = Checkbutton(self.headers_frame, text="", command=partial(self.set_metadata_dict, header_index, header_list),
+            index_tickbox = Checkbutton(self.headers_frame, text="", command=partial(self.set_header_dict, header, "INDEX"),
                                         onvalue="Is index header", offvalue="Is not index header")
             header_label.grid(row=header_row, column=0)
             header_tickbox.grid(row=header_row, column=1)
@@ -125,9 +130,21 @@ class TkGui:
         self.set_padding(self.headers_frame)
 
 
-    def set_metadata_dict(self, header_index, header_list, *args):
+    def set_header_dict(self, header, switch, *args):
         # this needs to take the value of a checkbox and update the metadata dictionary accordingly.
-        print(header_list[header_index])
+        if switch == "HEADER":
+            if header in self.header_dict["measures_headers"]:
+                self.header_dict["measures_headers"].remove(header)
+            else:
+                self.header_dict["measures_headers"].append(header)
+            print(self.header_dict["measures_headers"])
+        if switch == "INDEX":
+            if header != self.header_dict["index_header"]:
+                self.header_dict["index_header"] = header
+        if switch == "JOIN":
+            if header != self.header_dict["join_header"]:
+                self.header_dict["join_header"] = header
+
 
     def set_masterlist_metadata(self, *args):
         if self.species_dropdown.get() in self.master_index_dict.keys():
@@ -140,7 +157,8 @@ class TkGui:
         self._reset_tables_dropdown(new_table_options)
 
     def parse_final_doc(self):
-        pass
+        self.final_doc = TableDoc(self.table_doc_path, metadata_dict=self.metadata_dict, header_dict=self.header_dict)
+        self.final_doc.write_to_excel(self.output_path)
 
     def _reset_option_menu(self, options):
         """reset the values in the option menu

@@ -6,17 +6,12 @@ import os
 import errno
 
 
-MEASURES_HEADERS = ["#", "Recovery measures"]
-INDEX_HEADER = "#"
-JOIN_HEADER = "Recovery measures"
-
-
 class TableDoc:
     """ Either a Resdoc, recovery plan or action plan document containing
     tabular data to parse and save.
     """
 
-    def __init__(self, doc_file_path, header_dict=None):
+    def __init__(self, doc_file_path, metadata_dict=None, header_dict=None):
         self.metadata_dict = {}
         self.doc_path = doc_file_path
         self.dt_list = []  # doc table list
@@ -30,6 +25,11 @@ class TableDoc:
                                 "index_header": "",
                                 "join_header": ""
                                 }
+
+        if metadata_dict:
+            self.metadata_dict = metadata_dict
+        else:
+            self.metadata_dict = {}
 
         # make sure the filepath exists and is either a pdf or a Word doc:
         if not os.path.isfile(self.doc_path):
