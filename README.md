@@ -9,6 +9,7 @@ Outcomes of this project will include:
 3.  Conceptual workflow of elements that would be required to reverse-engineer outcomes 1 and 2 (above) by using forms, csv files, or Excel spreadsheets to generate reproducible reports (e.g. using Microsoft PowerBI, R Markdown, or other tools that are easily used and accessible to Species at Risk Program staff).
 
 ## Handy Links:
+ - Detailed instructions for getting the workflow up and running can be found [here](https://086gc-my.sharepoint.com/:w:/g/personal/quentin_stoyel_dfo-mpo_gc_ca/EXCqIsufb5tHpf1tW7dskL8BBj6BbBfMdY2Wan8rserOeg?e=BCpalP).
 
 -   Project board to craft, coordinate, and track milestones to be completed throughout the duration of this project: <https://github.com/orgs/dfo-mar-odis/projects/2/views/14> Most of the work of this project will be coordinated asynchronously through this board (which will be linked to the code to be developed), in addition to monthly meetings. The link above is for a for a view specifically for this project, however, the board contains other views for additional projects of the Reproducible Analytical Pipeline initiative.
 -   SARP documents: This project will select and review a list of SARP documents to extract data from, and identify the type of information to be standardized and extracted. The following link contains a folder that lists potential documents to be reviewed: [folder](https://086gc.sharepoint.com/:f:/s/MaritimesSpatialPlanning-MAROpenDataLogistics/Ej_hnfwCzfdEnlzCpE2jBXwB1DM6zJEToE9rmaPJxWy84w?e=pJJXxB)
