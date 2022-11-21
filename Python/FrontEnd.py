@@ -6,7 +6,7 @@ from tkinter import *
 from tkinter import filedialog
 from functools import partial
 
-from Python.DataTable import TableDoc
+from DataTable import TableDoc
 
 masterlist_keys = {"common_name": "COMMON_E",
                    "population": "POP_E",
