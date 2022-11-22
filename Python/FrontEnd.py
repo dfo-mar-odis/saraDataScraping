@@ -1,3 +1,4 @@
+import numpy as np
 import tkinter.messagebox
 
 import pandas as pd
@@ -5,7 +6,20 @@ from tkinter import *
 from tkinter import filedialog
 from functools import partial
 
-from Python.DataTable import TableDoc
+from DataTable import TableDoc
+
+masterlist_keys = {"common_name": "COMMON_E",
+                   "population": "POP_E",
+                   "lead_region": "LEAD_REG_E",
+                   }
+
+
+def write_master_list_option(df, with_population=True):
+
+    if with_population:
+        return df[masterlist_keys["common_name"]] + ", " + df[masterlist_keys["population"]] + " population. (" +df[masterlist_keys["lead_region"]] + ")"
+    else:
+        return df[masterlist_keys["common_name"]] + "(" + df[masterlist_keys["lead_region"]] + ")"
 
 
 class TkGui:
@@ -33,7 +47,7 @@ class TkGui:
         self.masterlist_frame.grid(row=0, column=0, padx=20, pady=10)
 
         masterlist_label = Label(self.masterlist_frame, text="Select SAR Masterlist")
-        masterlist_button = Button(self.masterlist_frame, text="Select file", command=self.set_masterlist)
+        masterlist_button = Button(self.masterlist_frame, text="Select file (.csv)", command=self.set_masterlist)
         masterlist_label.grid(row=0, column=0)
         masterlist_button.grid(row=1, column=0)
 
@@ -51,7 +65,7 @@ class TkGui:
         self.tabledoc_frame.grid(row=1, column=0, padx=20, pady=10)
 
         tabledoc_label = Label(self.tabledoc_frame, text="Select SAR Document")
-        tabledoc_button = Button(self.tabledoc_frame, text="Select Document", command=self.load_table_doc)
+        tabledoc_button = Button(self.tabledoc_frame, text="Select Document (.docx)", command=self.load_table_doc)
         tabledoc_label.grid(row=0, column=0)
         tabledoc_button.grid(row=1, column=0)
 
@@ -82,13 +96,14 @@ class TkGui:
         masterlist_path = filedialog.askopenfilename()
         if masterlist_path:
             try:
-                self.masterlist_df = pd.read_csv(masterlist_path)
-                self.masterlist_df["dropdown_text"] = self.masterlist_df["COMMON_E"] + ", " + self.masterlist_df["POP_E"] + " population. (" + \
-                                    self.masterlist_df["LEAD_REG_E"] + ")"
+                self.masterlist_df = pd.read_csv(masterlist_path).fillna('')
 
+                self.masterlist_df["dropdown_text"] = np.where(self.masterlist_df[masterlist_keys["population"]],
+                                                               write_master_list_option(self.masterlist_df, with_population=True),
+                                                               write_master_list_option(self.masterlist_df, with_population=False))
                 self.master_index_dict = {v: k for k, v in self.masterlist_df['dropdown_text'].to_dict().items()}
                 self._reset_option_menu(self.master_index_dict.keys())
-            except:
+            except Exception as e:
                 raise Exception("Invalid masterlist selected. Should be a .csv take from SARA SDE")
 
     def set_tables(self, *args):
