@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from camelot import read_pdf, plot
 from docx import Document, table
 import os
 import errno
@@ -53,7 +52,7 @@ class TableDoc:
 
     def scrape_pdf(self, line_scale=50):
         # very not supported yet....
-        self.dt_list = read_pdf(self.doc_path, pages="all", line_scale=line_scale)
+        pass
 
     def scrape_word(self):
         # function that extracts all the tables from a Word doc and saves them to self.dt_list as DocTable objects
@@ -78,16 +77,6 @@ class TableDoc:
         # Writes the output df into an excel sheet and opens the sheet
         self.out_dt.df.to_excel(outpath, index=False)
         os.startfile(outpath)
-
-    def show_grid_lines(self, table_index):
-        # for pdfs
-        # shows the grid lines for camelot tables, useful for debugging
-        return plot(self.df_list[table_index], kind='grid').show()
-
-    def parser_report(self, table_index):
-        # for pdfs
-        # shows the report for a camelot table, may be useful for QC
-        return self.df_list[table_index].parsing_report
 
 
 class DocTable:
