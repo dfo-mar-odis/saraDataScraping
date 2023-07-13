@@ -10,13 +10,13 @@ class TableDoc:
     tabular data to parse and save.
     """
 
-    def __init__(self, doc_file_path, metadata_dict=None, header_dict=None):
+    def __init__(self, doc_file_path, metadata_dict=None, header_dict=None, dump_all=False):
         self.metadata_dict = {}
         self.doc_path = doc_file_path
         self.dt_list = []  # doc table list
         self.measures_list = []
         self.out_dt = None
-
+        self.dump_all = dump_all
         if header_dict:
             self.header_dict = header_dict
         else:
@@ -75,8 +75,24 @@ class TableDoc:
 
     def write_to_excel(self, outpath):
         # Writes the output df into an excel sheet and opens the sheet
-        self.out_dt.df.to_excel(outpath, index=False)
-        os.startfile(outpath)
+
+        if self.dump_all:
+            options = {}
+            options['strings_to_formulas'] = False
+            options['strings_to_urls'] = False
+            start_row = 0
+            recovery_docx = Document(self.doc_path)
+            writer = pd.ExcelWriter(outpath, engine='xlsxwriter', engine_kwargs={'options': options})
+
+            for table in recovery_docx.tables:
+                df = docx_table_to_pd(table)
+                df.to_excel(writer, sheet_name='Sheet1', startrow=start_row, index=False)
+                start_row += len(df) + 2
+            writer.close()
+            os.startfile(outpath)
+        else:
+            self.out_dt.df.to_excel(outpath, index=False)
+            os.startfile(outpath)
 
 
 class DocTable:

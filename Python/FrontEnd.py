@@ -87,9 +87,11 @@ class TkGui:
         self.buttons_frame.grid(row=3, column=0, padx=20, pady=10)
 
         parse_button = Button(self.buttons_frame, text="Generate Excel", command=self.parse_final_doc)
+        dump_button = Button(self.buttons_frame, text="Dump all tables to Excel", command=self.parse_and_dump_doc)
         done_button = Button(self.buttons_frame, text="Exit", command=self.master.destroy)
         parse_button.grid(row=0, column=0, padx=10)
-        done_button.grid(row=0, column=1)
+        dump_button.grid(row=0, column=1, padx=10)
+        done_button.grid(row=0, column=2)
         self.master.mainloop()
 
     def set_masterlist(self):
@@ -170,6 +172,13 @@ class TkGui:
 
     def parse_final_doc(self):
         self.final_doc = TableDoc(self.table_doc_path, metadata_dict=self.metadata_dict, header_dict=self.header_dict)
+        try:
+            self.final_doc.write_to_excel(self.output_path)
+        except PermissionError:
+            tkinter.messagebox.showinfo("Error", "Close the excel sheet.")
+
+    def parse_and_dump_doc(self):
+        self.final_doc = TableDoc(self.table_doc_path, dump_all=True)
         try:
             self.final_doc.write_to_excel(self.output_path)
         except PermissionError:
